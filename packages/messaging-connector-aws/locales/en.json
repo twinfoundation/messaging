@@ -1,0 +1,16 @@
+{
+	"info": {
+		"awsMessagingConnector": {
+			"emailSending": "Sending email of type {type}",
+			"templateCreating": "Creating template of name {type}",
+			"templateDeleting": "Deleting template of name {type}"
+		}
+	},
+	"error": {
+		"awsMessagingConnector": {
+			"createCustomEmailFailed": "Failed to create custom email",
+			"createTemplateFailed": "Failed to create template",
+			"deleteTemplateFailed": "Failed to delete template with name {name}"
+		}
+	}
+}
