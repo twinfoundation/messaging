@@ -9,6 +9,12 @@ jobs:
   dist:
     runs-on: ubuntu-latest
 
+    services:
+      aws-ses:
+        image: adrianmssiota/ses-local-test-server:latest
+        ports:
+          - 8005:8005
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
