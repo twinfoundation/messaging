@@ -28,4 +28,12 @@ export interface IMessagingConnector extends IComponent {
 	 * @returns If the email was sent successfully.
 	 */
 	sendMassiveEmail(templateName: string, recipients: EmailRecipientType[]): Promise<boolean>;
+
+	/**
+	 * Send a SMS message to a phone number.
+	 * @param phoneNumber The recipient phone number.
+	 * @param message The message to send.
+	 * @returns If the SMS was sent successfully.
+	 */
+	sendSMS(phoneNumber: string, message: string): Promise<boolean>;
 }

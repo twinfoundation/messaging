@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"@aws-sdk/client-sesv2": "^3.687.0",
+		"@aws-sdk/client-sns": "^3.687.0",
 		"@twin.org/core": "next",
 		"@twin.org/entity": "next",
 		"@twin.org/logging-models": "next",

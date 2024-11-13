@@ -11,17 +11,18 @@ import {
 } from "@twin.org/logging-connector-entity-storage";
 import { LoggingConnectorFactory } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
-import { TEST_AWS_CONFIG } from "./setupTestEnv";
+import { TEST_AWS_SES_CONFIG, TEST_AWS_SNS_CONFIG } from "./setupTestEnv";
 import type {
 	EmailCustomType,
 	EmailRecipientType,
 	EmailTemplateType
 } from "../../messaging-models/src";
 import { AwsMessagingConnector } from "../src/awsMessagingConnector";
-import type { IAwsSESConnectorConfig } from "../src/models/IAwsSESConnectorConfig";
+import type { IAwsConnectorConfig } from "../src/models/IAwsConnectorConfig";
 
 let memoryEntityStorage: MemoryEntityStorageConnector<LogEntry>;
-const config: IAwsSESConnectorConfig = TEST_AWS_CONFIG;
+const sesConfiguration: IAwsConnectorConfig = TEST_AWS_SES_CONFIG;
+const snsConfiguration: IAwsConnectorConfig = TEST_AWS_SNS_CONFIG;
 
 describe("AwsMessagingConnector", () => {
 	beforeAll(async () => {
@@ -45,7 +46,8 @@ describe("AwsMessagingConnector", () => {
 				new AwsMessagingConnector(
 					undefined as unknown as {
 						entitySchema: string;
-						config: IAwsSESConnectorConfig;
+						sesConfig: IAwsConnectorConfig;
+						snsConfig: IAwsConnectorConfig;
 					}
 				)
 		).toThrow(
@@ -62,7 +64,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can fail to send a custom email without info", async () => {
 		const entityStorage = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		await expect(
 			entityStorage.sendCustomEmail(undefined as unknown as EmailCustomType)
@@ -77,7 +80,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can send a custom email", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		const objectSet: EmailCustomType = {
 			receiver: "receiver@example.com",
@@ -91,7 +95,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can fail to create a template without info", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		await expect(
 			messagingConnector.createTemplate(undefined as unknown as EmailTemplateType)
@@ -106,7 +111,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can create a template", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		const templateName = "TestTemplate";
 		const templateInfo: EmailTemplateType = {
@@ -123,7 +129,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can fail to create a template with the same name as a previous one", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 
 		const templateName = "TestTemplate";
@@ -146,7 +153,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can fail to delete a template without name", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		await expect(
 			messagingConnector.deleteTemplate(undefined as unknown as string)
@@ -161,7 +169,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can fail to delete a not found template", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		await expect(messagingConnector.deleteTemplate("NotExistingTemplate")).rejects.toMatchObject({
 			name: "GeneralError",
@@ -173,7 +182,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can delete a template", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		const templateName = "TestTemplate";
 		const templateInfo: EmailTemplateType = {
@@ -191,7 +201,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can fail to send a massive email without templateName", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		await expect(
 			messagingConnector.sendMassiveEmail(undefined as unknown as string, [])
@@ -206,7 +217,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can fail to send a massive email without recipients", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		await expect(
 			messagingConnector.sendMassiveEmail(
@@ -224,7 +236,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can fail to send a massive email without a valid template", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 		const templateName = "TestTemplate";
 		const recipients: EmailRecipientType[] = [
@@ -250,7 +263,8 @@ describe("AwsMessagingConnector", () => {
 
 	test("can send a massive email", async () => {
 		const messagingConnector = new AwsMessagingConnector({
-			config
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
 		});
 
 		const templateName = "TestTemplate";
@@ -277,7 +291,47 @@ describe("AwsMessagingConnector", () => {
 
 		const result = await messagingConnector.sendMassiveEmail(templateName, recipients);
 		expect(result).toEqual(true);
-
 		await messagingConnector.deleteTemplate(templateName);
+	});
+
+	test("can fail to send SMS without phoneNumber", async () => {
+		const messagingConnector = new AwsMessagingConnector({
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
+		});
+		await expect(
+			messagingConnector.sendSMS(undefined as unknown as string, "Test message")
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "phoneNumber",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("can fail to send SMS without message", async () => {
+		const messagingConnector = new AwsMessagingConnector({
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
+		});
+		await expect(
+			messagingConnector.sendSMS("+1234567890", undefined as unknown as string)
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "message",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("can send SMS", async () => {
+		const messagingConnector = new AwsMessagingConnector({
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
+		});
+		const result = await messagingConnector.sendSMS("+1234567890", "Test message");
+		expect(result).toEqual(true);
 	});
 });

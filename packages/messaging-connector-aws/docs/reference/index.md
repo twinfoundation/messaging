@@ -6,4 +6,4 @@
 
 ## Interfaces
 
-- [IAwsSESConnectorConfig](interfaces/IAwsSESConnectorConfig.md)
+- [IAwsConnectorConfig](interfaces/IAwsConnectorConfig.md)

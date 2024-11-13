@@ -8,7 +8,7 @@ Class for performing messaging operations using the AWS services.
 
 > **new AwsMessagingConnector**(`options`): [`AwsMessagingConnector`](AwsMessagingConnector.md)
 
-Create a new instance of IAwsSESConnectorConfig.
+Create a new instance of IAwsConnectorConfig.
 
 #### Parameters
 
@@ -20,9 +20,13 @@ The options for the connector.
 
 The type of logging connector to use, defaults to no logging.
 
-• **options.config**: [`IAwsSESConnectorConfig`](../interfaces/IAwsSESConnectorConfig.md)
+• **options.sesConfig**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
 
-The configuration for the connector.
+The configuration for the SES connector.
+
+• **options.snsConfig**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
+
+The configuration for the SNS connector.
 
 #### Returns
 
@@ -143,3 +147,27 @@ The recipients of the email.
 `Promise`\<`boolean`\>
 
 True if the email was sent successfully.
+
+***
+
+### sendSMS()
+
+> **sendSMS**(`phoneNumber`, `message`): `Promise`\<`boolean`\>
+
+Send a SMS message to a phone number.
+
+#### Parameters
+
+• **phoneNumber**: `string`
+
+The recipient phone number.
+
+• **message**: `string`
+
+The message to send.
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+If the SMS was sent successfully.

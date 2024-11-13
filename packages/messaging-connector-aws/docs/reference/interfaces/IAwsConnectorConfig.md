@@ -1,6 +1,6 @@
-# Interface: IAwsSESConnectorConfig
+# Interface: IAwsConnectorConfig
 
-Configuration for the AWS SES Connector.
+Configuration for the AWS Connector.
 
 ## Properties
 
@@ -16,7 +16,7 @@ The endpoint for the AWS instance.
 
 > **region**: `string`
 
-The region for the AWS SES instance.
+The region for the AWS instance.
 
 ***
 
@@ -24,7 +24,7 @@ The region for the AWS SES instance.
 
 > **accessKeyId**: `string`
 
-The access key ID for the AWS SES instance.
+The access key ID for the AWS instance.
 
 ***
 
@@ -32,4 +32,4 @@ The access key ID for the AWS SES instance.
 
 > **secretAccessKey**: `string`
 
-The secret access key for the AWS SES instance.
+The secret access key for the AWS instance.

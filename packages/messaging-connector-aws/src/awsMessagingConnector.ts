@@ -7,10 +7,11 @@ import {
 	SendBulkEmailCommand,
 	SendEmailCommand
 } from "@aws-sdk/client-sesv2";
+import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
 import { GeneralError, Guards } from "@twin.org/core";
 import { LoggingConnectorFactory } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
-import type { IAwsSESConnectorConfig } from "./models/IAwsSESConnectorConfig";
+import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
 // import type { EmailCustomType, IMessagingConnector, EmailTemplateType, EmailRecipientType } from "../../messaging-models/src/index"; -- This has to change after the models is reachable --
 
 /**
@@ -24,16 +25,28 @@ export class AwsMessagingConnector {
 	public readonly CLASS_NAME: string = nameof<AwsMessagingConnector>();
 
 	/**
-	 * The configuration for the connector.
+	 * The configuration for the SES connector.
 	 * @internal
 	 */
-	private readonly _config: IAwsSESConnectorConfig;
+	private readonly _sesConfig: IAwsConnectorConfig;
+
+	/**
+	 * The configuration for the SNS connector.
+	 * @internal
+	 */
+	private readonly _snsConfig: IAwsConnectorConfig;
 
 	/**
 	 * The Aws SES client.
 	 * @internal
 	 */
-	private readonly _client: SESv2Client;
+	private readonly _sesClient: SESv2Client;
+
+	/**
+	 * The Aws SNS client.
+	 * @internal
+	 */
+	private readonly _snsClient: SNSClient;
 
 	/**
 	 * Container user for the data storage.
@@ -42,38 +55,82 @@ export class AwsMessagingConnector {
 	private readonly _defaultOutgoingEmail: string;
 
 	/**
-	 * Create a new instance of IAwsSESConnectorConfig.
+	 * Create a new instance of IAwsConnectorConfig.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.config The configuration for the connector.
+	 * @param options.sesConfig The configuration for the SES connector.
+	 * @param options.snsConfig The configuration for the SNS connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; config: IAwsSESConnectorConfig }) {
+	constructor(options: {
+		loggingConnectorType?: string;
+		sesConfig: IAwsConnectorConfig;
+		snsConfig: IAwsConnectorConfig;
+	}) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IAwsSESConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
-		Guards.stringValue(
+		Guards.object<IAwsConnectorConfig>(
 			this.CLASS_NAME,
-			nameof(options.config.accessKeyId),
-			options.config.accessKeyId
+			nameof(options.sesConfig),
+			options.sesConfig
 		);
 		Guards.stringValue(
 			this.CLASS_NAME,
-			nameof(options.config.secretAccessKey),
-			options.config.secretAccessKey
+			nameof(options.sesConfig.endpoint),
+			options.sesConfig.endpoint
+		);
+		Guards.stringValue(this.CLASS_NAME, nameof(options.sesConfig.region), options.sesConfig.region);
+		Guards.stringValue(
+			this.CLASS_NAME,
+			nameof(options.sesConfig.accessKeyId),
+			options.sesConfig.accessKeyId
+		);
+		Guards.stringValue(
+			this.CLASS_NAME,
+			nameof(options.sesConfig.secretAccessKey),
+			options.sesConfig.secretAccessKey
+		);
+		Guards.object<IAwsConnectorConfig>(
+			this.CLASS_NAME,
+			nameof(options.snsConfig),
+			options.snsConfig
+		);
+		Guards.stringValue(
+			this.CLASS_NAME,
+			nameof(options.snsConfig.endpoint),
+			options.snsConfig.endpoint
+		);
+		Guards.stringValue(this.CLASS_NAME, nameof(options.snsConfig.region), options.snsConfig.region);
+		Guards.stringValue(
+			this.CLASS_NAME,
+			nameof(options.snsConfig.accessKeyId),
+			options.snsConfig.accessKeyId
+		);
+		Guards.stringValue(
+			this.CLASS_NAME,
+			nameof(options.snsConfig.secretAccessKey),
+			options.snsConfig.secretAccessKey
 		);
 
-		this._config = options.config;
-		this._client = new SESv2Client({
-			endpoint: this._config.endpoint,
-			region: this._config.region,
+		this._sesConfig = options.sesConfig;
+		this._sesClient = new SESv2Client({
+			endpoint: this._sesConfig.endpoint,
+			region: this._sesConfig.region,
 			credentials: {
-				accessKeyId: this._config.accessKeyId,
-				secretAccessKey: this._config.secretAccessKey
+				accessKeyId: this._sesConfig.accessKeyId,
+				secretAccessKey: this._sesConfig.secretAccessKey
 			}
 		});
 
 		this._defaultOutgoingEmail = "default@email.com";
+
+		this._snsConfig = options.snsConfig;
+		this._snsClient = new SNSClient({
+			endpoint: this._snsConfig.endpoint,
+			region: this._snsConfig.region,
+			credentials: {
+				accessKeyId: this._snsConfig.accessKeyId,
+				secretAccessKey: this._snsConfig.secretAccessKey
+			}
+		});
 	}
 
 	/**
@@ -102,7 +159,7 @@ export class AwsMessagingConnector {
 					type: "Custom Email"
 				}
 			});
-			const result = await this._client.send(
+			const result = await this._sesClient.send(
 				new SendEmailCommand({
 					Destination: { ToAddresses: [info.receiver] },
 					Content: {
@@ -157,7 +214,7 @@ export class AwsMessagingConnector {
 					name: info.name
 				}
 			});
-			const result = await this._client.send(
+			const result = await this._sesClient.send(
 				new CreateEmailTemplateCommand({
 					TemplateName: info.name,
 					TemplateContent: {
@@ -204,7 +261,7 @@ export class AwsMessagingConnector {
 					name
 				}
 			});
-			const result = await this._client.send(
+			const result = await this._sesClient.send(
 				new DeleteEmailTemplateCommand({
 					TemplateName: name
 				})
@@ -269,7 +326,7 @@ export class AwsMessagingConnector {
 				return entry;
 			});
 
-			const result = await this._client.send(
+			const result = await this._sesClient.send(
 				new SendBulkEmailCommand({
 					FromEmailAddress: this._defaultOutgoingEmail,
 					BulkEmailEntries: bulkEmailEntries,
@@ -303,6 +360,34 @@ export class AwsMessagingConnector {
 				{ value: templateName },
 				err
 			);
+		}
+	}
+
+	/**
+	 * Send a SMS message to a phone number.
+	 * @param phoneNumber The recipient phone number.
+	 * @param message The message to send.
+	 * @returns If the SMS was sent successfully.
+	 */
+	public async sendSMS(phoneNumber: string, message: string): Promise<boolean> {
+		Guards.stringValue(this.CLASS_NAME, nameof(phoneNumber), phoneNumber);
+		Guards.stringValue(this.CLASS_NAME, nameof(message), message);
+		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
+		const params = {
+			Message: message,
+			PhoneNumber: phoneNumber
+		};
+		try {
+			await nodeLogging?.log({
+				level: "info",
+				source: this.CLASS_NAME,
+				ts: Date.now(),
+				message: "smsSending"
+			});
+			await this._snsClient.send(new PublishCommand(params));
+			return true;
+		} catch (err) {
+			throw new GeneralError(this.CLASS_NAME, "sendSMSFailed", undefined, err);
 		}
 	}
 }
