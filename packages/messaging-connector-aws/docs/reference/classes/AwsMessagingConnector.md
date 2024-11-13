@@ -2,6 +2,10 @@
 
 Class for performing messaging operations using the AWS services.
 
+## Implements
+
+- `IMessagingConnector`
+
 ## Constructors
 
 ### new AwsMessagingConnector()
@@ -40,6 +44,10 @@ The configuration for the SNS connector.
 
 Runtime name for the class.
 
+#### Implementation of
+
+`IMessagingConnector.CLASS_NAME`
+
 ## Methods
 
 ### sendCustomEmail()
@@ -50,27 +58,19 @@ Send a custom email using AWS SES.
 
 #### Parameters
 
-• **info**
+• **info**: `EmailCustomType`
 
 The information for the custom email.
-
-• **info.receiver**: `string`
-
-The receiver of the email.
-
-• **info.subject**: `string`
-
-The subject of the email.
-
-• **info.content**: `string`
-
-The content of the email.
 
 #### Returns
 
 `Promise`\<`boolean`\>
 
 True if the email was send successfully, otherwise undefined.
+
+#### Implementation of
+
+`IMessagingConnector.sendCustomEmail`
 
 ***
 
@@ -82,27 +82,19 @@ Create an email template.
 
 #### Parameters
 
-• **info**
+• **info**: `EmailTemplateType`
 
 The information for the email template.
-
-• **info.name**: `string`
-
-The name of the email template.
-
-• **info.subject**: `string`
-
-The subject of the email template.
-
-• **info.content**: `string`
-
-The content of the email template.
 
 #### Returns
 
 `Promise`\<`boolean`\>
 
 True if the template was created successfully.
+
+#### Implementation of
+
+`IMessagingConnector.createTemplate`
 
 ***
 
@@ -138,7 +130,7 @@ Send a massive email using a template.
 
 The name of the template to use.
 
-• **recipients**: `object`[]
+• **recipients**: `EmailRecipientType`[]
 
 The recipients of the email.
 
@@ -147,6 +139,10 @@ The recipients of the email.
 `Promise`\<`boolean`\>
 
 True if the email was sent successfully.
+
+#### Implementation of
+
+`IMessagingConnector.sendMassiveEmail`
 
 ***
 
@@ -171,3 +167,7 @@ The message to send.
 `Promise`\<`boolean`\>
 
 If the SMS was sent successfully.
+
+#### Implementation of
+
+`IMessagingConnector.sendSMS`

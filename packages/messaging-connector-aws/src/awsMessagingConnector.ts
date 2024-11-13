@@ -10,15 +10,19 @@ import {
 import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
 import { GeneralError, Guards } from "@twin.org/core";
 import { LoggingConnectorFactory } from "@twin.org/logging-models";
+import type {
+	EmailCustomType,
+	IMessagingConnector,
+	EmailTemplateType,
+	EmailRecipientType
+} from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
-// import type { EmailCustomType, IMessagingConnector, EmailTemplateType, EmailRecipientType } from "../../messaging-models/src/index"; -- This has to change after the models is reachable --
 
 /**
  * Class for performing messaging operations using the AWS services.
  */
-// export class AwsMessagingConnector implements IMessagingConnector { -- This has to change after the models is reachable --
-export class AwsMessagingConnector {
+export class AwsMessagingConnector implements IMessagingConnector {
 	/**
 	 * Runtime name for the class.
 	 */
@@ -136,17 +140,9 @@ export class AwsMessagingConnector {
 	/**
 	 * Send a custom email using AWS SES.
 	 * @param info The information for the custom email.
-	 * @param info.receiver The receiver of the email.
-	 * @param info.subject The subject of the email.
-	 * @param info.content The content of the email.
 	 * @returns True if the email was send successfully, otherwise undefined.
 	 */
-	// public async sendCustomEmail(info: EmailCustomType): Promise<boolean> { -- This has to change after the models is reachable --
-	public async sendCustomEmail(info: {
-		receiver: string;
-		subject: string;
-		content: string;
-	}): Promise<boolean> {
+	public async sendCustomEmail(info: EmailCustomType): Promise<boolean> {
 		Guards.objectValue(this.CLASS_NAME, nameof(info), info);
 		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
 		try {
@@ -191,17 +187,9 @@ export class AwsMessagingConnector {
 	/**
 	 * Create an email template.
 	 * @param info The information for the email template.
-	 * @param info.name The name of the email template.
-	 * @param info.subject The subject of the email template.
-	 * @param info.content The content of the email template.
 	 * @returns True if the template was created successfully.
 	 */
-	// public async createTemplate(info: EmailTemplateType): Promise<boolean> { -- This has to change after the models is reachable --
-	public async createTemplate(info: {
-		name: string;
-		subject: string;
-		content: string;
-	}): Promise<boolean> {
+	public async createTemplate(info: EmailTemplateType): Promise<boolean> {
 		Guards.objectValue(this.CLASS_NAME, nameof(info), info);
 		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
 		try {
@@ -288,10 +276,9 @@ export class AwsMessagingConnector {
 	 * @param recipients The recipients of the email.
 	 * @returns True if the email was sent successfully.
 	 */
-	// public async sendMassiveEmail(templateName: string, recipients: EmailRecipientType[]): Promise<boolean> { -- This has to change after the models is reachable --
 	public async sendMassiveEmail(
 		templateName: string,
-		recipients: { email: string; content: { key: string; value: string }[] }[]
+		recipients: EmailRecipientType[]
 	): Promise<boolean> {
 		Guards.stringValue(this.CLASS_NAME, nameof(templateName), templateName);
 		Guards.arrayValue(this.CLASS_NAME, nameof(recipients), recipients);
