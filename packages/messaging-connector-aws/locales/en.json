@@ -4,7 +4,11 @@
 			"emailSending": "Sending email of type {type}",
 			"templateCreating": "Creating template of name {type}",
 			"templateDeleting": "Deleting template of name {type}",
-			"smsSending": "Sending SMS of type"
+			"smsSending": "Sending SMS of type",
+			"deviceRegistering": "Registering device token",
+			"deviceTokenChecking": "Checking device token",
+			"platformAppChecking": "Checking platform application",
+			"pushNotificationSending": "Sending push notification"
 		}
 	},
 	"error": {
@@ -12,7 +16,12 @@
 			"createCustomEmailFailed": "Failed to create custom email",
 			"createTemplateFailed": "Failed to create template",
 			"deleteTemplateFailed": "Failed to delete template with name {name}",
-			"sendSMSFailed": "Failed to send SMS"
+			"sendSMSFailed": "Failed to send SMS",
+			"deviceTokenCheckFailed": "Failed to check device token",
+			"deviceTokenRegisterFailed": "Failed to register device token",
+			"platformAppCreationFailed": "Failed to create platform application",
+			"platformAppCreationCheckFailed": "Failed to check or create the platform application",
+			"sendPushNotificationFailed": "Failed to send push notification"
 		}
 	}
 }
