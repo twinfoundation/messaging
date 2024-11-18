@@ -144,7 +144,7 @@ The device token.
 
 `Promise`\<`string`\>
 
-The device register address.
+The device registered address.
 
 ***
 
@@ -173,3 +173,75 @@ The message to send.
 `Promise`\<`boolean`\>
 
 If the notification was sent successfully.
+
+***
+
+### createTopic()
+
+> **createTopic**(`topicName`): `Promise`\<`string`\>
+
+Creates a topic to send notifications.
+
+#### Parameters
+
+• **topicName**: `string`
+
+The name of the topic.
+
+#### Returns
+
+`Promise`\<`string`\>
+
+The topic address.
+
+***
+
+### subscribeToTopic()
+
+> **subscribeToTopic**(`topicAddress`, `deviceAddress`): `Promise`\<`boolean`\>
+
+Subscribes a device to a topic.
+
+#### Parameters
+
+• **topicAddress**: `string`
+
+The address of the topic.
+
+• **deviceAddress**: `string`
+
+The address of the device.
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+True if the subscription was successful.
+
+***
+
+### publishToTopic()
+
+> **publishToTopic**(`topicAddress`, `title`, `message`): `Promise`\<`boolean`\>
+
+Publishes a message to a topic.
+
+#### Parameters
+
+• **topicAddress**: `string`
+
+The address of the topic.
+
+• **title**: `string`
+
+The title of the message.
+
+• **message**: `string`
+
+The message to send.
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+If the message was published successfully to the topic.

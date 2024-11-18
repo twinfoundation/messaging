@@ -263,3 +263,87 @@ If the notification was sent successfully.
 #### Implementation of
 
 `IMessagingConnector.sendSinglePushNotification`
+
+***
+
+### createTopic()
+
+> **createTopic**(`topicName`): `Promise`\<`string`\>
+
+Creates a topic if it does not exist.
+
+#### Parameters
+
+• **topicName**: `string`
+
+The name of the topic.
+
+#### Returns
+
+`Promise`\<`string`\>
+
+The topic address.
+
+#### Implementation of
+
+`IMessagingConnector.createTopic`
+
+***
+
+### subscribeToTopic()
+
+> **subscribeToTopic**(`topicAddress`, `deviceAddress`): `Promise`\<`boolean`\>
+
+Subscribes a device to a topic.
+
+#### Parameters
+
+• **topicAddress**: `string`
+
+The address of the topic.
+
+• **deviceAddress**: `string`
+
+The address of the device.
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+True if the subscription was successful.
+
+#### Implementation of
+
+`IMessagingConnector.subscribeToTopic`
+
+***
+
+### publishToTopic()
+
+> **publishToTopic**(`topicAddress`, `title`, `message`): `Promise`\<`boolean`\>
+
+Publishes a message to a topic.
+
+#### Parameters
+
+• **topicAddress**: `string`
+
+The address of the topic.
+
+• **title**: `string`
+
+The title of the message.
+
+• **message**: `string`
+
+The message to send.
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+If the message was published successfully to the topic.
+
+#### Implementation of
+
+`IMessagingConnector.publishToTopic`
