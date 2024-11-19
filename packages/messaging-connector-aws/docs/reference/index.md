@@ -2,7 +2,9 @@
 
 ## Classes
 
-- [AwsMessagingConnector](classes/AwsMessagingConnector.md)
+- [AwsMessagingEmailConnector](classes/AwsMessagingEmailConnector.md)
+- [AwsMessagingPushNotificationConnector](classes/AwsMessagingPushNotificationConnector.md)
+- [AwsMessagingSmsConnector](classes/AwsMessagingSmsConnector.md)
 
 ## Interfaces
 

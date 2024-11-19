@@ -1,0 +1,95 @@
+// Copyright 2024 IOTA Stiftung.
+// SPDX-License-Identifier: Apache-2.0.
+/* eslint-disable max-classes-per-file */
+import { I18n } from "@twin.org/core";
+import { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
+import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
+import {
+	EntityStorageLoggingConnector,
+	type LogEntry,
+	initSchema
+} from "@twin.org/logging-connector-entity-storage";
+import { LoggingConnectorFactory } from "@twin.org/logging-models";
+import { nameof } from "@twin.org/nameof";
+import { TEST_AWS_SNS_CONFIG } from "./setupTestEnv";
+import { AwsMessagingSmsConnector } from "../src/awsMessagingSmsConnector";
+import type { IAwsConnectorConfig } from "../src/models/IAwsConnectorConfig";
+
+let memoryEntityStorage: MemoryEntityStorageConnector<LogEntry>;
+const snsConfiguration: IAwsConnectorConfig = TEST_AWS_SNS_CONFIG;
+
+describe("AwsMessagingSmsConnector", () => {
+	beforeAll(async () => {
+		I18n.addDictionary("en", await import("../locales/en.json"));
+
+		initSchema();
+	});
+
+	beforeEach(async () => {
+		memoryEntityStorage = new MemoryEntityStorageConnector<LogEntry>({
+			entitySchema: nameof<LogEntry>()
+		});
+		EntityStorageConnectorFactory.register("log-entry", () => memoryEntityStorage);
+		LoggingConnectorFactory.register("logging", () => new EntityStorageLoggingConnector());
+		LoggingConnectorFactory.register("node-logging", () => new EntityStorageLoggingConnector());
+	});
+
+	test("can fail to construct when there are no options", async () => {
+		expect(
+			() =>
+				new AwsMessagingSmsConnector(
+					undefined as unknown as {
+						entitySchema: string;
+						snsConfig: IAwsConnectorConfig;
+					}
+				)
+		).toThrow(
+			expect.objectContaining({
+				name: "GuardError",
+				message: "guard.objectUndefined",
+				properties: {
+					property: "options",
+					value: "undefined"
+				}
+			})
+		);
+	});
+
+	test("can fail to send SMS without phoneNumber", async () => {
+		const messagingConnector = new AwsMessagingSmsConnector({
+			snsConfig: snsConfiguration
+		});
+		await expect(
+			messagingConnector.sendSMS(undefined as unknown as string, "Test message")
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "phoneNumber",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("can fail to send SMS without message", async () => {
+		const messagingConnector = new AwsMessagingSmsConnector({
+			snsConfig: snsConfiguration
+		});
+		await expect(
+			messagingConnector.sendSMS("+1234567890", undefined as unknown as string)
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "message",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("can send SMS", async () => {
+		const messagingConnector = new AwsMessagingSmsConnector({
+			snsConfig: snsConfiguration
+		});
+		const result = await messagingConnector.sendSMS("+1234567890", "Test message");
+		expect(result).toEqual(true);
+	});
+});

@@ -1,120 +1,62 @@
-# Interface: IMessagingConnector
+# Class: AwsMessagingPushNotificationConnector
 
-Interface describing a messaging connector functionalities
+Class for connecting to the email messaging operations of the AWS services.
 
-## Extends
+## Implements
 
-- `IComponent`
+- `IMessagingPushNotificationsConnector`
+
+## Constructors
+
+### new AwsMessagingPushNotificationConnector()
+
+> **new AwsMessagingPushNotificationConnector**(`options`): [`AwsMessagingPushNotificationConnector`](AwsMessagingPushNotificationConnector.md)
+
+Create a new instance of IAwsConnectorConfig.
+
+#### Parameters
+
+• **options**
+
+The options for the connector.
+
+• **options.loggingConnectorType?**: `string`
+
+The type of logging connector to use, defaults to no logging.
+
+• **options.snsConfig**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
+
+The configuration for the SNS connector.
+
+#### Returns
+
+[`AwsMessagingPushNotificationConnector`](AwsMessagingPushNotificationConnector.md)
+
+## Properties
+
+### CLASS\_NAME
+
+> `readonly` **CLASS\_NAME**: `string`
+
+Runtime name for the class.
+
+#### Implementation of
+
+`IMessagingPushNotificationsConnector.CLASS_NAME`
 
 ## Methods
 
-### sendCustomEmail()
-
-> **sendCustomEmail**(`sender`, `info`): `Promise`\<`boolean`\>
-
-Send a custom email.
-
-#### Parameters
-
-• **sender**: `string`
-
-The sender email address.
-
-• **info**: [`EmailCustomType`](EmailCustomType.md)
-
-The information of the email to send.
-
-#### Returns
-
-`Promise`\<`boolean`\>
-
-If the email was sent successfully.
-
-***
-
-### createTemplate()
-
-> **createTemplate**(`template`): `Promise`\<`boolean`\>
-
-Create custom template.
-
-#### Parameters
-
-• **template**: [`EmailTemplateType`](EmailTemplateType.md)
-
-The email template information.
-
-#### Returns
-
-`Promise`\<`boolean`\>
-
-If the template was created successfully.
-
-***
-
-### sendMassiveEmail()
-
-> **sendMassiveEmail**(`sender`, `templateName`, `recipients`): `Promise`\<`boolean`\>
-
-Send a email with a template to multiple recipients.
-
-#### Parameters
-
-• **sender**: `string`
-
-The sender email address.
-
-• **templateName**: `string`
-
-The name of the template.
-
-• **recipients**: [`EmailRecipientType`](EmailRecipientType.md)[]
-
-The recipients of the email and their values.
-
-#### Returns
-
-`Promise`\<`boolean`\>
-
-If the email was sent successfully.
-
-***
-
-### sendSMS()
-
-> **sendSMS**(`phoneNumber`, `message`): `Promise`\<`boolean`\>
-
-Send a SMS message to a phone number.
-
-#### Parameters
-
-• **phoneNumber**: `string`
-
-The recipient phone number.
-
-• **message**: `string`
-
-The message to send.
-
-#### Returns
-
-`Promise`\<`boolean`\>
-
-If the SMS was sent successfully.
-
-***
-
 ### createPlatformApplication()
 
-> **createPlatformApplication**(`applicationName`, `platformType`, `platformCredentials`): `Promise`\<`string`\>
+> **createPlatformApplication**(`appName`, `platformType`, `platformCredentials`): `Promise`\<`string`\>
 
-Creates a platform application to push notifications to it.
+Creates a platform application if it does not exist.
 
 #### Parameters
 
-• **applicationName**: `string`
+• **appName**: `string`
 
-The name of the application.
+The name of the app.
 
 • **platformType**: `string`
 
@@ -122,13 +64,17 @@ The type of platform used for the push notifications.
 
 • **platformCredentials**: `string`
 
-The credentials for the platform auth.
+The credentials for the used platform.
 
 #### Returns
 
 `Promise`\<`string`\>
 
 The platform application address.
+
+#### Implementation of
+
+`IMessagingPushNotificationsConnector.createPlatformApplication`
 
 ***
 
@@ -152,7 +98,11 @@ The device token.
 
 `Promise`\<`string`\>
 
-The device registered address.
+If the device was registered successfully.
+
+#### Implementation of
+
+`IMessagingPushNotificationsConnector.registerDevice`
 
 ***
 
@@ -182,13 +132,17 @@ The message to send.
 
 If the notification was sent successfully.
 
+#### Implementation of
+
+`IMessagingPushNotificationsConnector.sendSinglePushNotification`
+
 ***
 
 ### createTopic()
 
 > **createTopic**(`topicName`): `Promise`\<`string`\>
 
-Creates a topic to send notifications.
+Creates a topic if it does not exist.
 
 #### Parameters
 

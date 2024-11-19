@@ -15,8 +15,6 @@ Guards.stringValue("TestEnv", "TEST_AWS_REGION", process.env.TEST_AWS_REGION);
 Guards.stringValue("TestEnv", "TEST_AWS_KEY_ID", process.env.TEST_AWS_KEY_ID);
 Guards.stringValue("TestEnv", "TEST_AWS_KEY_SECRET", process.env.TEST_AWS_KEY_SECRET);
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 export const TEST_AWS_SES_CONFIG: IAwsConnectorConfig = {
 	endpoint: process.env.TEST_AWS_SES_ENDPOINT,
 	region: process.env.TEST_AWS_REGION,
