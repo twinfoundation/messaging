@@ -11,7 +11,7 @@ npm install @twin.org/messaging-connector-aws
 ## Testing
 
 The tests developed are functional tests and need an AWS SES simulator and an AWS SNS simulator up and running.
-The AWS SNS simulator can't send real SMS messages but simulates the server response accordingly.
+The AWS SNS simulator can't send real SMS messages nor push notifications but simulates the server response accordingly.
 
 To run AWS SES locally:
 

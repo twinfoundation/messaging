@@ -62,13 +62,29 @@ describe("AwsMessagingConnector", () => {
 		);
 	});
 
+	test("can fail to send a custom email without sender", async () => {
+		const entityStorage = new AwsMessagingConnector({
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
+		});
+		await expect(
+			entityStorage.sendCustomEmail(undefined as unknown as string, {} as EmailCustomType)
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "sender",
+				value: "undefined"
+			}
+		});
+	});
+
 	test("can fail to send a custom email without info", async () => {
 		const entityStorage = new AwsMessagingConnector({
 			sesConfig: sesConfiguration,
 			snsConfig: snsConfiguration
 		});
 		await expect(
-			entityStorage.sendCustomEmail(undefined as unknown as EmailCustomType)
+			entityStorage.sendCustomEmail("sender@example.com", undefined as unknown as EmailCustomType)
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
@@ -89,11 +105,11 @@ describe("AwsMessagingConnector", () => {
 			content: "<body><h1>Hi, Joe!</h1><p>This is a custom email.</p></body>"
 		};
 
-		const result = await messagingConnector.sendCustomEmail(objectSet);
+		const result = await messagingConnector.sendCustomEmail("sender@example.com", objectSet);
 		expect(result).toEqual(true);
 	});
 
-	test("can fail to create a template without info", async () => {
+	test("can fail to create a template without template", async () => {
 		const messagingConnector = new AwsMessagingConnector({
 			sesConfig: sesConfiguration,
 			snsConfig: snsConfiguration
@@ -103,7 +119,7 @@ describe("AwsMessagingConnector", () => {
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
-				property: "info",
+				property: "template",
 				value: "undefined"
 			}
 		});
@@ -199,13 +215,29 @@ describe("AwsMessagingConnector", () => {
 		expect(result).toEqual(true);
 	});
 
+	test("can fail to send a massive email without sender", async () => {
+		const messagingConnector = new AwsMessagingConnector({
+			sesConfig: sesConfiguration,
+			snsConfig: snsConfiguration
+		});
+		await expect(
+			messagingConnector.sendMassiveEmail(undefined as unknown as string, "templateName", [])
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "sender",
+				value: "undefined"
+			}
+		});
+	});
+
 	test("can fail to send a massive email without templateName", async () => {
 		const messagingConnector = new AwsMessagingConnector({
 			sesConfig: sesConfiguration,
 			snsConfig: snsConfiguration
 		});
 		await expect(
-			messagingConnector.sendMassiveEmail(undefined as unknown as string, [])
+			messagingConnector.sendMassiveEmail("sender@example.com", undefined as unknown as string, [])
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
@@ -222,6 +254,7 @@ describe("AwsMessagingConnector", () => {
 		});
 		await expect(
 			messagingConnector.sendMassiveEmail(
+				"sender@example.com",
 				"TestTemplate",
 				undefined as unknown as EmailRecipientType[]
 			)
@@ -252,7 +285,7 @@ describe("AwsMessagingConnector", () => {
 		];
 
 		await expect(
-			messagingConnector.sendMassiveEmail(templateName, recipients)
+			messagingConnector.sendMassiveEmail("sender@example.com", templateName, recipients)
 		).rejects.toMatchObject({
 			name: "GeneralError",
 			properties: {
@@ -289,7 +322,11 @@ describe("AwsMessagingConnector", () => {
 			}
 		];
 
-		const result = await messagingConnector.sendMassiveEmail(templateName, recipients);
+		const result = await messagingConnector.sendMassiveEmail(
+			"sender@example.com",
+			templateName,
+			recipients
+		);
 		expect(result).toEqual(true);
 		await messagingConnector.deleteTemplate(templateName);
 	});

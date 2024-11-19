@@ -32,7 +32,7 @@ import { nameof } from "@twin.org/nameof";
 import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
 
 /**
- * Class for performing messaging operations using the AWS services.
+ * Class for connecting to the messaging operations of the AWS services.
  */
 export class AwsMessagingConnector implements IMessagingConnector {
 	/**
@@ -63,12 +63,6 @@ export class AwsMessagingConnector implements IMessagingConnector {
 	 * @internal
 	 */
 	private readonly _snsClient: SNSClient;
-
-	/**
-	 * Container user for the data storage.
-	 * @internal
-	 */
-	private readonly _defaultOutgoingEmail: string;
 
 	/**
 	 * Create a new instance of IAwsConnectorConfig.
@@ -136,8 +130,6 @@ export class AwsMessagingConnector implements IMessagingConnector {
 			}
 		});
 
-		this._defaultOutgoingEmail = "default@email.com";
-
 		this._snsConfig = options.snsConfig;
 		this._snsClient = new SNSClient({
 			endpoint: this._snsConfig.endpoint,
@@ -151,10 +143,12 @@ export class AwsMessagingConnector implements IMessagingConnector {
 
 	/**
 	 * Send a custom email using AWS SES.
+	 * @param sender The sender email address.
 	 * @param info The information for the custom email.
 	 * @returns True if the email was send successfully, otherwise undefined.
 	 */
-	public async sendCustomEmail(info: EmailCustomType): Promise<boolean> {
+	public async sendCustomEmail(sender: string, info: EmailCustomType): Promise<boolean> {
+		Guards.stringValue(this.CLASS_NAME, nameof(sender), sender);
 		Guards.objectValue(this.CLASS_NAME, nameof(info), info);
 		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
 		try {
@@ -178,7 +172,7 @@ export class AwsMessagingConnector implements IMessagingConnector {
 							}
 						}
 					},
-					FromEmailAddress: this._defaultOutgoingEmail
+					FromEmailAddress: sender
 				})
 			);
 			if (result.$metadata.httpStatusCode !== 200) {
@@ -198,11 +192,11 @@ export class AwsMessagingConnector implements IMessagingConnector {
 
 	/**
 	 * Create an email template.
-	 * @param info The information for the email template.
+	 * @param template The information for the email template.
 	 * @returns True if the template was created successfully.
 	 */
-	public async createTemplate(info: EmailTemplateType): Promise<boolean> {
-		Guards.objectValue(this.CLASS_NAME, nameof(info), info);
+	public async createTemplate(template: EmailTemplateType): Promise<boolean> {
+		Guards.objectValue(this.CLASS_NAME, nameof(template), template);
 		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
 		try {
 			await nodeLogging?.log({
@@ -211,15 +205,15 @@ export class AwsMessagingConnector implements IMessagingConnector {
 				ts: Date.now(),
 				message: "templateCreating",
 				data: {
-					name: info.name
+					name: template.name
 				}
 			});
 			const result = await this._sesClient.send(
 				new CreateEmailTemplateCommand({
-					TemplateName: info.name,
+					TemplateName: template.name,
 					TemplateContent: {
-						Subject: info.subject,
-						Html: info.content
+						Subject: template.subject,
+						Html: template.content
 					}
 				})
 			);
@@ -233,13 +227,18 @@ export class AwsMessagingConnector implements IMessagingConnector {
 				throw new GeneralError(
 					this.CLASS_NAME,
 					"createTemplateFailed",
-					{ value: info.name },
+					{ value: template.name },
 					result
 				);
 			}
 			return true;
 		} catch (err) {
-			throw new GeneralError(this.CLASS_NAME, "createTemplateFailed", { value: info.name }, err);
+			throw new GeneralError(
+				this.CLASS_NAME,
+				"createTemplateFailed",
+				{ value: template.name },
+				err
+			);
 		}
 	}
 
@@ -284,14 +283,17 @@ export class AwsMessagingConnector implements IMessagingConnector {
 
 	/**
 	 * Send a massive email using a template.
+	 * @param sender The sender email address.
 	 * @param templateName The name of the template to use.
 	 * @param recipients The recipients of the email.
 	 * @returns True if the email was sent successfully.
 	 */
 	public async sendMassiveEmail(
+		sender: string,
 		templateName: string,
 		recipients: EmailRecipientType[]
 	): Promise<boolean> {
+		Guards.stringValue(this.CLASS_NAME, nameof(sender), sender);
 		Guards.stringValue(this.CLASS_NAME, nameof(templateName), templateName);
 		Guards.arrayValue(this.CLASS_NAME, nameof(recipients), recipients);
 		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
@@ -327,7 +329,7 @@ export class AwsMessagingConnector implements IMessagingConnector {
 
 			const result = await this._sesClient.send(
 				new SendBulkEmailCommand({
-					FromEmailAddress: this._defaultOutgoingEmail,
+					FromEmailAddress: sender,
 					BulkEmailEntries: bulkEmailEntries,
 					DefaultContent: {
 						Template: {

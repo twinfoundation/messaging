@@ -1,6 +1,6 @@
 # Class: AwsMessagingConnector
 
-Class for performing messaging operations using the AWS services.
+Class for connecting to the messaging operations of the AWS services.
 
 ## Implements
 
@@ -52,11 +52,15 @@ Runtime name for the class.
 
 ### sendCustomEmail()
 
-> **sendCustomEmail**(`info`): `Promise`\<`boolean`\>
+> **sendCustomEmail**(`sender`, `info`): `Promise`\<`boolean`\>
 
 Send a custom email using AWS SES.
 
 #### Parameters
+
+• **sender**: `string`
+
+The sender email address.
 
 • **info**: `EmailCustomType`
 
@@ -76,13 +80,13 @@ True if the email was send successfully, otherwise undefined.
 
 ### createTemplate()
 
-> **createTemplate**(`info`): `Promise`\<`boolean`\>
+> **createTemplate**(`template`): `Promise`\<`boolean`\>
 
 Create an email template.
 
 #### Parameters
 
-• **info**: `EmailTemplateType`
+• **template**: `EmailTemplateType`
 
 The information for the email template.
 
@@ -120,11 +124,15 @@ True if the template was deleted successfully.
 
 ### sendMassiveEmail()
 
-> **sendMassiveEmail**(`templateName`, `recipients`): `Promise`\<`boolean`\>
+> **sendMassiveEmail**(`sender`, `templateName`, `recipients`): `Promise`\<`boolean`\>
 
 Send a massive email using a template.
 
 #### Parameters
+
+• **sender**: `string`
+
+The sender email address.
 
 • **templateName**: `string`
 

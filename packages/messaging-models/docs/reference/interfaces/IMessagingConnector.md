@@ -10,11 +10,15 @@ Interface describing a messaging connector functionalities
 
 ### sendCustomEmail()
 
-> **sendCustomEmail**(`info`): `Promise`\<`boolean`\>
+> **sendCustomEmail**(`sender`, `info`): `Promise`\<`boolean`\>
 
 Send a custom email.
 
 #### Parameters
+
+• **sender**: `string`
+
+The sender email address.
 
 • **info**: [`EmailCustomType`](EmailCustomType.md)
 
@@ -30,13 +34,13 @@ If the email was sent successfully.
 
 ### createTemplate()
 
-> **createTemplate**(`info`): `Promise`\<`boolean`\>
+> **createTemplate**(`template`): `Promise`\<`boolean`\>
 
 Create custom template.
 
 #### Parameters
 
-• **info**: [`EmailTemplateType`](EmailTemplateType.md)
+• **template**: [`EmailTemplateType`](EmailTemplateType.md)
 
 The email template information.
 
@@ -50,11 +54,15 @@ If the template was created successfully.
 
 ### sendMassiveEmail()
 
-> **sendMassiveEmail**(`templateName`, `recipients`): `Promise`\<`boolean`\>
+> **sendMassiveEmail**(`sender`, `templateName`, `recipients`): `Promise`\<`boolean`\>
 
 Send a email with a template to multiple recipients.
 
 #### Parameters
+
+• **sender**: `string`
+
+The sender email address.
 
 • **templateName**: `string`
 
@@ -114,7 +122,7 @@ The type of platform used for the push notifications.
 
 • **platformCredentials**: `string`
 
-The credentials for the used platform.
+The credentials for the platform auth.
 
 #### Returns
 

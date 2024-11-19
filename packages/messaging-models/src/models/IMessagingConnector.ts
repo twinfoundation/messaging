@@ -13,25 +13,31 @@ export interface IMessagingConnector extends IComponent {
 
 	/**
 	 * Send a custom email.
+	 * @param sender The sender email address.
 	 * @param info The information of the email to send.
 	 * @returns If the email was sent successfully.
 	 */
-	sendCustomEmail(info: EmailCustomType): Promise<boolean>;
+	sendCustomEmail(sender: string, info: EmailCustomType): Promise<boolean>;
 
 	/**
 	 * Create custom template.
-	 * @param info The email template information.
+	 * @param template The email template information.
 	 * @returns If the template was created successfully.
 	 */
-	createTemplate(info: EmailTemplateType): Promise<boolean>;
+	createTemplate(template: EmailTemplateType): Promise<boolean>;
 
 	/**
 	 * Send a email with a template to multiple recipients.
+	 * @param sender The sender email address.
 	 * @param templateName The name of the template.
 	 * @param recipients The recipients of the email and their values.
 	 * @returns If the email was sent successfully.
 	 */
-	sendMassiveEmail(templateName: string, recipients: EmailRecipientType[]): Promise<boolean>;
+	sendMassiveEmail(
+		sender: string,
+		templateName: string,
+		recipients: EmailRecipientType[]
+	): Promise<boolean>;
 
 	/**
 	 * SMS related functions
@@ -53,7 +59,7 @@ export interface IMessagingConnector extends IComponent {
 	 * Creates a platform application to push notifications to it.
 	 * @param applicationName The name of the application.
 	 * @param platformType The type of platform used for the push notifications.
-	 * @param platformCredentials The credentials for the used platform.
+	 * @param platformCredentials The credentials for the platform auth.
 	 * @returns The platform application address.
 	 */
 	createPlatformApplication(
