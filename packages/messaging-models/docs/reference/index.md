@@ -6,8 +6,6 @@
 - [IMessagingPushNotificationsConnector](interfaces/IMessagingPushNotificationsConnector.md)
 - [IMessagingSmsConnector](interfaces/IMessagingSmsConnector.md)
 - [EmailCustomType](interfaces/EmailCustomType.md)
-- [EmailTemplateType](interfaces/EmailTemplateType.md)
-- [EmailRecipientType](interfaces/EmailRecipientType.md)
 
 ## Variables
 

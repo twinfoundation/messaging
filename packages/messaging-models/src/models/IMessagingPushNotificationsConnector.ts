@@ -39,28 +39,4 @@ export interface IMessagingPushNotificationsConnector extends IComponent {
 		title: string,
 		message: string
 	): Promise<boolean>;
-
-	/**
-	 * Creates a topic to send notifications.
-	 * @param topicName The name of the topic.
-	 * @returns The topic address.
-	 * createTopic(topicName: string): Promise<string>;
-	 */
-
-	/**
-	 * Subscribes a device to a topic.
-	 * @param topicAddress The address of the topic.
-	 * @param deviceAddress The address of the device.
-	 * @returns True if the subscription was successful.
-	 * subscribeToTopic(topicAddress: string, deviceAddress: string): Promise<boolean>;
-	 */
-
-	/**
-	 * Publishes a message to a topic.
-	 * @param topicAddress The address of the topic.
-	 * @param title The title of the message.
-	 * @param message The message to send.
-	 * @returns If the message was published successfully to the topic.
-	 * publishToTopic(topicAddress: string, title: string, message: string): Promise<boolean>;
-	 */
 }

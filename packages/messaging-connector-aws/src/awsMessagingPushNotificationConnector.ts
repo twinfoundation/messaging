@@ -3,15 +3,11 @@
 import {
 	CreatePlatformApplicationCommand,
 	CreatePlatformEndpointCommand,
-	CreateTopicCommand,
 	ListEndpointsByPlatformApplicationCommand,
 	type ListEndpointsByPlatformApplicationResponse,
 	ListPlatformApplicationsCommand,
-	ListSubscriptionsByTopicCommand,
-	ListTopicsCommand,
 	PublishCommand,
-	SNSClient,
-	SubscribeCommand
+	SNSClient
 } from "@aws-sdk/client-sns";
 import { GeneralError, Guards } from "@twin.org/core";
 import { LoggingConnectorFactory } from "@twin.org/logging-models";
@@ -242,151 +238,6 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	}
 
 	/**
-	 * Creates a topic if it does not exist.
-	 * @param topicName The name of the topic.
-	 * @returns The topic address.
-	 */
-	public async createTopic(topicName: string): Promise<string> {
-		Guards.stringValue(this.CLASS_NAME, nameof(topicName), topicName);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
-		try {
-			await nodeLogging?.log({
-				level: "info",
-				source: this.CLASS_NAME,
-				ts: Date.now(),
-				message: "topicCreating"
-			});
-			const existingTopicArn = await this.checkIfTopicExists(topicName);
-			if (existingTopicArn) {
-				return existingTopicArn;
-			}
-			const command = new CreateTopicCommand({ Name: topicName });
-			const data = await this._snsClient.send(command);
-			if (data.TopicArn) {
-				return data.TopicArn;
-			}
-			throw new GeneralError(this.CLASS_NAME, "createTopicFailed", { value: topicName }, data);
-		} catch (err) {
-			throw new GeneralError(this.CLASS_NAME, "createTopicFailed", { value: topicName }, err);
-		}
-	}
-
-	/**
-	 * Subscribes a device to a topic.
-	 * @param topicAddress The address of the topic.
-	 * @param deviceAddress The address of the device.
-	 * @returns True if the subscription was successful.
-	 */
-	public async subscribeToTopic(topicAddress: string, deviceAddress: string): Promise<boolean> {
-		Guards.stringValue(this.CLASS_NAME, nameof(topicAddress), topicAddress);
-		Guards.stringValue(this.CLASS_NAME, nameof(deviceAddress), deviceAddress);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
-		try {
-			await nodeLogging?.log({
-				level: "info",
-				source: this.CLASS_NAME,
-				ts: Date.now(),
-				message: "topicSubscribing"
-			});
-			const existingSubscriptionArn = await this.checkIfSubscriptionExists(
-				topicAddress,
-				deviceAddress
-			);
-			if (existingSubscriptionArn) {
-				return true;
-			}
-			const params = {
-				TopicArn: topicAddress,
-				Protocol: "application",
-				Endpoint: deviceAddress
-			};
-			const command = new SubscribeCommand(params);
-			const data = await this._snsClient.send(command);
-			if (data?.SubscriptionArn) {
-				return true;
-			}
-			throw new GeneralError(
-				this.CLASS_NAME,
-				"subscribeToTopicFailed",
-				{ topic: topicAddress, device: deviceAddress },
-				data
-			);
-		} catch (err) {
-			throw new GeneralError(
-				this.CLASS_NAME,
-				"subscribeToTopicFailed",
-				{ topic: topicAddress, device: deviceAddress },
-				err
-			);
-		}
-	}
-
-	/**
-	 * Publishes a message to a topic.
-	 * @param topicAddress The address of the topic.
-	 * @param title The title of the message.
-	 * @param message The message to send.
-	 * @returns If the message was published successfully to the topic.
-	 */
-	public async publishToTopic(
-		topicAddress: string,
-		title: string,
-		message: string
-	): Promise<boolean> {
-		Guards.stringValue(this.CLASS_NAME, nameof(topicAddress), topicAddress);
-		Guards.stringValue(this.CLASS_NAME, nameof(title), title);
-		Guards.stringValue(this.CLASS_NAME, nameof(message), message);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
-		try {
-			await nodeLogging?.log({
-				level: "info",
-				source: this.CLASS_NAME,
-				ts: Date.now(),
-				message: "topicPublishing"
-			});
-			const messageParams = {
-				default: message,
-				GCM: JSON.stringify({
-					notification: {
-						title,
-						body: message
-					}
-				})
-			};
-			const publishMessageParams = {
-				Message: JSON.stringify(messageParams),
-				TopicArn: topicAddress,
-				MessageStructure: "json"
-			};
-
-			const command = new PublishCommand(publishMessageParams);
-			const data = await this._snsClient.send(command);
-			if (data.$metadata.httpStatusCode !== 200) {
-				await nodeLogging?.log({
-					level: "error",
-					source: this.CLASS_NAME,
-					ts: Date.now(),
-					message: "sendTopicPushNotificationFailed"
-				});
-				throw new GeneralError(
-					this.CLASS_NAME,
-					"sendTopicPushNotificationFailed",
-					{ topic: topicAddress },
-					data
-				);
-			}
-			return true;
-		} catch (err) {
-			throw new GeneralError(
-				this.CLASS_NAME,
-				"sendTopicPushNotificationFailed",
-				{ topic: topicAddress },
-				err
-			);
-		}
-	}
-
-	/**
 	 * Checks if the platform application exists.
 	 * @param appName The name of the app.
 	 * @returns The platform application address if it exists, otherwise undefined.
@@ -454,76 +305,6 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			return undefined;
 		} catch (err) {
 			throw new GeneralError(this.CLASS_NAME, "deviceTokenCheckFailed", undefined, err);
-		}
-	}
-
-	/**
-	 * Checks if the topic exists in the application.
-	 * @param topicName The topic name.
-	 * @returns The topic address if it exists, otherwise undefined.
-	 */
-	private async checkIfTopicExists(topicName: string): Promise<string | undefined> {
-		Guards.stringValue(this.CLASS_NAME, nameof(topicName), topicName);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
-		try {
-			await nodeLogging?.log({
-				level: "info",
-				source: this.CLASS_NAME,
-				ts: Date.now(),
-				message: "topicChecking"
-			});
-			const command = new ListTopicsCommand({});
-			const data = await this._snsClient.send(command);
-
-			if (data.Topics) {
-				const existingTopic = data.Topics.find(topic => topic.TopicArn?.endsWith(`:${topicName}`));
-
-				if (existingTopic?.TopicArn) {
-					return existingTopic.TopicArn;
-				}
-			}
-			return undefined;
-		} catch (err) {
-			throw new GeneralError(this.CLASS_NAME, "deviceTokenCheckFailed", undefined, err);
-		}
-	}
-
-	/**
-	 * Checks if the subscription exists for a given topic and device.
-	 * @param topicAddress The address of the topic.
-	 * @param deviceAddress The address of the device.
-	 * @returns The subscription address if it exists, otherwise undefined.
-	 */
-	private async checkIfSubscriptionExists(
-		topicAddress: string,
-		deviceAddress: string
-	): Promise<string | undefined> {
-		Guards.stringValue(this.CLASS_NAME, nameof(topicAddress), topicAddress);
-		Guards.stringValue(this.CLASS_NAME, nameof(deviceAddress), deviceAddress);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
-		try {
-			await nodeLogging?.log({
-				level: "info",
-				source: this.CLASS_NAME,
-				ts: Date.now(),
-				message: "subscriptionChecking"
-			});
-			const command = new ListSubscriptionsByTopicCommand({
-				TopicArn: topicAddress
-			});
-			const data = await this._snsClient.send(command);
-
-			const existingSubscription = data.Subscriptions?.find(
-				subscription =>
-					subscription.Protocol === "application" && subscription.Endpoint === deviceAddress
-			);
-
-			if (existingSubscription) {
-				return existingSubscription.SubscriptionArn;
-			}
-			return undefined;
-		} catch (err) {
-			throw new GeneralError(this.CLASS_NAME, "subscriptionCheckFailed", undefined, err);
 		}
 	}
 }

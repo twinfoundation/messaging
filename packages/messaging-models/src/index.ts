@@ -4,4 +4,4 @@ export * from "./factories/messagingConnectorFactory";
 export * from "./models/IMessagingEmailConnector";
 export * from "./models/IMessagingPushNotificationsConnector";
 export * from "./models/IMessagingSmsConnector";
-export * from "./models/emailsTypes";
+export * from "./models/emailType";
