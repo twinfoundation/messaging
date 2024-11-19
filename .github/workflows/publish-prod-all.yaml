@@ -9,7 +9,7 @@ jobs:
       id-token: write
 
     if: github.ref == 'refs/heads/main'
-    
+
     services:
       aws-ses:
         image: adrianmssiota/ses-local-test-server:latest
@@ -29,11 +29,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        package: 
-          [
-            messaging-models,
-            messaging-connector-aws
-          ]
+        package: [messaging-models, messaging-connector-aws]
 
     steps:
       - name: Checkout
