@@ -33,3 +33,11 @@ The access key ID for the AWS instance.
 > **secretAccessKey**: `string`
 
 The secret access key for the AWS instance.
+
+***
+
+### applicationsSettings?
+
+> `optional` **applicationsSettings**: [`IAwsApplicationSettings`](IAwsApplicationSettings.md)[]
+
+The applications settings for the push notifications.

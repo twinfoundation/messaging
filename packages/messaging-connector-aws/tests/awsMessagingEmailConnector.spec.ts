@@ -12,7 +12,6 @@ import {
 import { LoggingConnectorFactory } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
 import { TEST_AWS_SES_CONFIG } from "./setupTestEnv";
-import type { EmailCustomType } from "../../messaging-models/src";
 import { AwsMessagingEmailConnector } from "../src/awsMessagingEmailConnector";
 import type { IAwsConnectorConfig } from "../src/models/IAwsConnectorConfig";
 
@@ -61,7 +60,7 @@ describe("AwsMessagingEmailConnector", () => {
 			sesConfig: sesConfiguration
 		});
 		await expect(
-			entityStorage.sendCustomEmail(undefined as unknown as string, {} as EmailCustomType)
+			entityStorage.sendCustomEmail(undefined as unknown as string, [], "Subject", "Content")
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
@@ -71,32 +70,91 @@ describe("AwsMessagingEmailConnector", () => {
 		});
 	});
 
-	test("can fail to send a custom email without info", async () => {
+	test("can fail to send a custom email without receivers", async () => {
 		const entityStorage = new AwsMessagingEmailConnector({
 			sesConfig: sesConfiguration
 		});
 		await expect(
-			entityStorage.sendCustomEmail("sender@example.com", undefined as unknown as EmailCustomType)
+			entityStorage.sendCustomEmail(
+				"sender@example.com",
+				undefined as unknown as string[],
+				"Subject",
+				"Content"
+			)
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
-				property: "info",
+				property: "receivers",
 				value: "undefined"
 			}
 		});
 	});
 
-	test("can send a custom email", async () => {
+	test("can fail to send a custom email without subject", async () => {
+		const entityStorage = new AwsMessagingEmailConnector({
+			sesConfig: sesConfiguration
+		});
+		await expect(
+			entityStorage.sendCustomEmail(
+				"sender@example.com",
+				["receiver1@example.com"],
+				undefined as unknown as string,
+				"Content"
+			)
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "subject",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("can fail to send a custom email without content", async () => {
+		const entityStorage = new AwsMessagingEmailConnector({
+			sesConfig: sesConfiguration
+		});
+		await expect(
+			entityStorage.sendCustomEmail(
+				"sender@example.com",
+				["receiver1@example.com"],
+				"Subject",
+				undefined as unknown as string
+			)
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "content",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("can send a custom email to a single receiver", async () => {
 		const messagingConnector = new AwsMessagingEmailConnector({
 			sesConfig: sesConfiguration
 		});
-		const objectSet: EmailCustomType = {
-			receiver: "receiver@example.com",
-			subject: "Custom Email",
-			content: "<body><h1>Hi, Joe!</h1><p>This is a custom email.</p></body>"
-		};
 
-		const result = await messagingConnector.sendCustomEmail("sender@example.com", objectSet);
+		const result = await messagingConnector.sendCustomEmail(
+			"sender@example.com",
+			["receiver1@example.com"],
+			"Custom Email",
+			"<body><h1>Hi, Joe!</h1><p>This is a custom email.</p></body>"
+		);
+		expect(result).toEqual(true);
+	});
+
+	test("can send a custom email to multiple receivers", async () => {
+		const messagingConnector = new AwsMessagingEmailConnector({
+			sesConfig: sesConfiguration
+		});
+
+		const result = await messagingConnector.sendCustomEmail(
+			"sender@example.com",
+			["receiver1@example.com", "receiver3@example.com", "receiver2@example.com"],
+			"Custom Email",
+			"<body><h1>Hi, Joe!</h1><p>This is a custom email.</p></body>"
+		);
 		expect(result).toEqual(true);
 	});
 });

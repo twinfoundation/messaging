@@ -9,8 +9,8 @@ import {
 	PublishCommand,
 	SNSClient
 } from "@aws-sdk/client-sns";
-import { GeneralError, Guards } from "@twin.org/core";
-import { LoggingConnectorFactory } from "@twin.org/logging-models";
+import { GeneralError, Guards, Is } from "@twin.org/core";
+import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/logging-models";
 import type { IMessagingPushNotificationsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
@@ -25,6 +25,12 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	public readonly CLASS_NAME: string = nameof<AwsMessagingPushNotificationConnector>();
 
 	/**
+	 * The logging connector.
+	 * @internal
+	 */
+	protected readonly _logging?: ILoggingConnector;
+
+	/**
 	 * The configuration for the SNS connector.
 	 * @internal
 	 */
@@ -37,7 +43,13 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	private readonly _snsClient: SNSClient;
 
 	/**
-	 * Create a new instance of IAwsConnectorConfig.
+	 * A variable to store the application ids to the address because of the AWS usage.
+	 * @internal
+	 */
+	private readonly _applicationMap: Map<string, string>;
+
+	/**
+	 * Create a new instance of AwsMessagingPushNotificationConnector.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
 	 * @param options.snsConfig The configuration for the SNS connector.
@@ -65,7 +77,17 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			nameof(options.snsConfig.secretAccessKey),
 			options.snsConfig.secretAccessKey
 		);
+		Guards.arrayValue(
+			this.CLASS_NAME,
+			nameof(options.snsConfig.applicationsSettings),
+			options.snsConfig.applicationsSettings
+		);
 
+		if (Is.stringValue(options.loggingConnectorType)) {
+			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
+		}
+
+		this._applicationMap = new Map<string, string>();
 		this._snsConfig = options.snsConfig;
 		this._snsClient = new SNSClient({
 			endpoint: this._snsConfig.endpoint,
@@ -78,88 +100,100 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	}
 
 	/**
-	 * Creates a platform application if it does not exist.
-	 * @param appName The name of the app.
-	 * @param platformType The type of platform used for the push notifications.
-	 * @param platformCredentials The credentials for the used platform.
-	 * @returns The platform application address.
+	 * The component needs to be started when the node is initialized.
+	 * @param nodeIdentity The identity of the node starting the component.
+	 * @param nodeLoggingConnectorType The node logging connector type, defaults to "node-logging".
+	 * @returns Nothing.
 	 */
-	public async createPlatformApplication(
-		appName: string,
-		platformType: string,
-		platformCredentials: string
-	): Promise<string> {
-		Guards.stringValue(this.CLASS_NAME, nameof(appName), appName);
-		Guards.stringValue(this.CLASS_NAME, nameof(platformType), platformType);
-		Guards.stringValue(this.CLASS_NAME, nameof(platformCredentials), platformCredentials);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
+	public async start(nodeIdentity: string, nodeLoggingConnectorType?: string): Promise<void> {
 		try {
-			const existingArn = await this.checkPlatformApplication(appName);
-			if (existingArn) {
-				return existingArn;
-			}
-
-			await nodeLogging?.log({
+			await this._logging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),
-				message: "platformAppCreating"
+				message: "nodeStarting"
 			});
-
-			const createParams = {
-				Name: appName,
-				Platform: platformType,
-				Attributes: {
-					PlatformCredential: platformCredentials
-				}
-			};
-
-			const createCommand = new CreatePlatformApplicationCommand(createParams);
-			const createData = await this._snsClient.send(createCommand);
-			if (createData.PlatformApplicationArn) {
-				return createData.PlatformApplicationArn;
+			if (
+				!this._snsConfig.applicationsSettings ||
+				this._snsConfig.applicationsSettings.length === 0
+			) {
+				await this._logging?.log({
+					level: "warn",
+					source: this.CLASS_NAME,
+					ts: Date.now(),
+					message: "applicationSettingsMissing"
+				});
+				return;
 			}
-			throw new GeneralError(this.CLASS_NAME, "platformAppCreationFailed", undefined);
+
+			for (const app of this._snsConfig.applicationsSettings) {
+				const {
+					applicationId,
+					pushNotificationsPlatformType,
+					pushNotificationsPlatformCredentials
+				} = app;
+				try {
+					const applicationAddress = await this.createPlatformApplication(
+						applicationId,
+						pushNotificationsPlatformType,
+						pushNotificationsPlatformCredentials
+					);
+					this._applicationMap.set(applicationId, applicationAddress);
+				} catch (err) {
+					throw new GeneralError(
+						this.CLASS_NAME,
+						"applicationRegistrationFailed",
+						{ property: "applicationId", value: applicationId },
+						err
+					);
+				}
+			}
 		} catch (err) {
-			throw new GeneralError(this.CLASS_NAME, "platformAppCreationFailed", undefined, err);
+			throw new GeneralError(this.CLASS_NAME, "applicationRegistrationFailed", undefined, err);
 		}
 	}
 
 	/**
 	 * Registers a device to an specific app in order to send notifications to it.
-	 * @param applicationAddress The application address.
+	 * @param applicationId The application address.
 	 * @param deviceToken The device token.
 	 * @returns If the device was registered successfully.
 	 */
-	public async registerDevice(applicationAddress: string, deviceToken: string): Promise<string> {
-		Guards.stringValue(this.CLASS_NAME, nameof(applicationAddress), applicationAddress);
+	public async registerDevice(applicationId: string, deviceToken: string): Promise<string> {
+		Guards.stringValue(this.CLASS_NAME, nameof(applicationId), applicationId);
 		Guards.stringValue(this.CLASS_NAME, nameof(deviceToken), deviceToken);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
 		try {
-			await nodeLogging?.log({
+			await this._logging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),
 				message: "deviceRegistering"
 			});
 
+			const applicationArn = this._applicationMap.get(applicationId);
+			if (!applicationArn) {
+				throw new GeneralError(this.CLASS_NAME, "applicationIdNotFound", {
+					property: "applicationId",
+					value: applicationId
+				});
+			}
+
 			const createEndpointParams = {
-				PlatformApplicationArn: applicationAddress,
+				PlatformApplicationArn: applicationArn,
 				Token: deviceToken
 			};
-			const existingEndpointArn = await this.checkIfDeviceTokenExists(
-				applicationAddress,
-				deviceToken
-			);
+			const existingEndpointArn = await this.checkIfDeviceTokenExists(applicationArn, deviceToken);
+
 			if (existingEndpointArn) {
 				return existingEndpointArn;
 			}
 			const command = new CreatePlatformEndpointCommand(createEndpointParams);
 			const data = await this._snsClient.send(command);
+
 			if (!data.EndpointArn) {
 				throw new GeneralError(this.CLASS_NAME, "deviceTokenRegisterFailed", {
-					property: "applicationAddress",
-					value: applicationAddress
+					property: "applicationId",
+					value: applicationId
 				});
 			}
 			return data.EndpointArn;
@@ -167,7 +201,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			throw new GeneralError(
 				this.CLASS_NAME,
 				"deviceTokenRegisterFailed",
-				{ property: "applicationAddress", value: applicationAddress },
+				{ property: "applicationId", value: applicationId },
 				err
 			);
 		}
@@ -188,9 +222,8 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 		Guards.stringValue(this.CLASS_NAME, nameof(deviceAddress), deviceAddress);
 		Guards.stringValue(this.CLASS_NAME, nameof(title), title);
 		Guards.stringValue(this.CLASS_NAME, nameof(message), message);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
 		try {
-			await nodeLogging?.log({
+			await this._logging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),
@@ -213,7 +246,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			const command = new PublishCommand(publishMessageParams);
 			const data = await this._snsClient.send(command);
 			if (data.$metadata.httpStatusCode !== 200) {
-				await nodeLogging?.log({
+				await this._logging?.log({
 					level: "error",
 					source: this.CLASS_NAME,
 					ts: Date.now(),
@@ -238,15 +271,63 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	}
 
 	/**
+	 * Creates a platform application if it does not exist.
+	 * @param applicationId The application identificator.
+	 * @param platformType The type of platform used for the push notifications.
+	 * @param platformCredentials The credentials for the used platform.
+	 * @returns The platform application address.
+	 */
+	private async createPlatformApplication(
+		applicationId: string,
+		platformType: string,
+		platformCredentials: string
+	): Promise<string> {
+		Guards.stringValue(this.CLASS_NAME, nameof(applicationId), applicationId);
+		Guards.stringValue(this.CLASS_NAME, nameof(platformType), platformType);
+		Guards.stringValue(this.CLASS_NAME, nameof(platformCredentials), platformCredentials);
+		try {
+			const existingArn = await this.checkPlatformApplication(applicationId);
+			if (existingArn) {
+				this._applicationMap.set(applicationId, existingArn);
+				return existingArn;
+			}
+
+			await this._logging?.log({
+				level: "info",
+				source: this.CLASS_NAME,
+				ts: Date.now(),
+				message: "platformAppCreating"
+			});
+
+			const createParams = {
+				Name: applicationId,
+				Platform: platformType,
+				Attributes: {
+					PlatformCredential: platformCredentials
+				}
+			};
+
+			const createCommand = new CreatePlatformApplicationCommand(createParams);
+			const createData = await this._snsClient.send(createCommand);
+			if (createData.PlatformApplicationArn) {
+				this._applicationMap.set(applicationId, createData.PlatformApplicationArn);
+				return createData.PlatformApplicationArn;
+			}
+			throw new GeneralError(this.CLASS_NAME, "platformAppCreationFailed", undefined);
+		} catch (err) {
+			throw new GeneralError(this.CLASS_NAME, "platformAppCreationFailed", undefined, err);
+		}
+	}
+
+	/**
 	 * Checks if the platform application exists.
 	 * @param appName The name of the app.
 	 * @returns The platform application address if it exists, otherwise undefined.
 	 */
 	private async checkPlatformApplication(appName: string): Promise<string | undefined> {
 		Guards.stringValue(this.CLASS_NAME, nameof(appName), appName);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
 		try {
-			await nodeLogging?.log({
+			await this._logging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),
@@ -281,9 +362,8 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	): Promise<string | undefined> {
 		Guards.stringValue(this.CLASS_NAME, nameof(applicationAddress), applicationAddress);
 		Guards.stringValue(this.CLASS_NAME, nameof(deviceToken), deviceToken);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
 		try {
-			await nodeLogging?.log({
+			await this._logging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),

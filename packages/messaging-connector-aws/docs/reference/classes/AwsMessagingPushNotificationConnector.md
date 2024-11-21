@@ -12,7 +12,7 @@ Class for connecting to the email messaging operations of the AWS services.
 
 > **new AwsMessagingPushNotificationConnector**(`options`): [`AwsMessagingPushNotificationConnector`](AwsMessagingPushNotificationConnector.md)
 
-Create a new instance of IAwsConnectorConfig.
+Create a new instance of AwsMessagingPushNotificationConnector.
 
 #### Parameters
 
@@ -46,47 +46,43 @@ Runtime name for the class.
 
 ## Methods
 
-### createPlatformApplication()
+### start()
 
-> **createPlatformApplication**(`appName`, `platformType`, `platformCredentials`): `Promise`\<`string`\>
+> **start**(`nodeIdentity`, `nodeLoggingConnectorType`?): `Promise`\<`void`\>
 
-Creates a platform application if it does not exist.
+The component needs to be started when the node is initialized.
 
 #### Parameters
 
-• **appName**: `string`
+• **nodeIdentity**: `string`
 
-The name of the app.
+The identity of the node starting the component.
 
-• **platformType**: `string`
+• **nodeLoggingConnectorType?**: `string`
 
-The type of platform used for the push notifications.
-
-• **platformCredentials**: `string`
-
-The credentials for the used platform.
+The node logging connector type, defaults to "node-logging".
 
 #### Returns
 
-`Promise`\<`string`\>
+`Promise`\<`void`\>
 
-The platform application address.
+Nothing.
 
 #### Implementation of
 
-`IMessagingPushNotificationsConnector.createPlatformApplication`
+`IMessagingPushNotificationsConnector.start`
 
 ***
 
 ### registerDevice()
 
-> **registerDevice**(`applicationAddress`, `deviceToken`): `Promise`\<`string`\>
+> **registerDevice**(`applicationId`, `deviceToken`): `Promise`\<`string`\>
 
 Registers a device to an specific app in order to send notifications to it.
 
 #### Parameters
 
-• **applicationAddress**: `string`
+• **applicationId**: `string`
 
 The application address.
 

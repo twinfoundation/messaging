@@ -1,10 +1,8 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import {
-	MessagingEmailConnectorFactory,
-	MessagingPushNotificationsConnectorFactory,
-	MessagingSmsConnectorFactory
-} from "../src/factories/messagingConnectorFactory";
+import { MessagingEmailConnectorFactory } from "../src/factories/messagingEmailConnectorFactory";
+import { MessagingPushNotificationsConnectorFactory } from "../src/factories/messagingPushNotificationsConnectorFactory";
+import { MessagingSmsConnectorFactory } from "../src/factories/messagingSmsConnectorFactory";
 import type { IMessagingEmailConnector } from "../src/models/IMessagingEmailConnector";
 import type { IMessagingPushNotificationsConnector } from "../src/models/IMessagingPushNotificationsConnector";
 import type { IMessagingSmsConnector } from "../src/models/IMessagingSmsConnector";

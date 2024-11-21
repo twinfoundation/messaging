@@ -1,6 +1,8 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
 
+import type { IAwsApplicationSettings } from "./IAwsApplicationSettings";
+
 /**
  * Configuration for the AWS Connector.
  */
@@ -24,4 +26,9 @@ export interface IAwsConnectorConfig {
 	 * The secret access key for the AWS instance.
 	 */
 	secretAccessKey: string;
+
+	/**
+	 * The applications settings for the push notifications.
+	 */
+	applicationsSettings?: IAwsApplicationSettings[];
 }

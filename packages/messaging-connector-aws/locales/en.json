@@ -13,7 +13,8 @@
 			"topicChecking": "Checking topic existence",
 			"subscriptionChecking": "Checking subscription existence",
 			"topicSubscribing": "Subscribing to topic",
-			"topicPublishing": "Publishing to topic"
+			"topicPublishing": "Publishing to topic",
+			"nodeStarting": "Starting AWS messaging connector"
 		}
 	},
 	"error": {
@@ -32,6 +33,11 @@
 			"topicCheckFailed": "Failed to check topic",
 			"subscribeToTopicFailed": "Failed to subscribe to topic",
 			"sendTopicPushNotificationFailed": "Failed to send push notification to topic"
+		}
+	},
+	"warn": {
+		"awsMessagingConnector": {
+			"applicationSettingsMissing": "Application settings are missing"
 		}
 	}
 }

@@ -8,34 +8,6 @@ Interface describing the push notifications messaging connector functionalities
 
 ## Methods
 
-### createPlatformApplication()
-
-> **createPlatformApplication**(`applicationName`, `platformType`, `platformCredentials`): `Promise`\<`string`\>
-
-Creates a platform application to push notifications to it.
-
-#### Parameters
-
-• **applicationName**: `string`
-
-The name of the application.
-
-• **platformType**: `string`
-
-The type of platform used for the push notifications.
-
-• **platformCredentials**: `string`
-
-The credentials for the platform auth.
-
-#### Returns
-
-`Promise`\<`string`\>
-
-The platform application address.
-
-***
-
 ### registerDevice()
 
 > **registerDevice**(`applicationAddress`, `deviceToken`): `Promise`\<`string`\>

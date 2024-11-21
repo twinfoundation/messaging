@@ -1,10 +1,11 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
-import { GeneralError, Guards } from "@twin.org/core";
-import { LoggingConnectorFactory } from "@twin.org/logging-models";
-import type { EmailCustomType, IMessagingEmailConnector } from "@twin.org/messaging-models";
+import { GeneralError, Guards, Is } from "@twin.org/core";
+import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/logging-models";
+import type { IMessagingEmailConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
+import { HttpStatusCode } from "@twin.org/web";
 import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
 
 /**
@@ -15,6 +16,12 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	 * Runtime name for the class.
 	 */
 	public readonly CLASS_NAME: string = nameof<AwsMessagingEmailConnector>();
+
+	/**
+	 * The logging connector.
+	 * @internal
+	 */
+	protected readonly _logging?: ILoggingConnector;
 
 	/**
 	 * The configuration for the SES connector.
@@ -29,7 +36,7 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	private readonly _sesClient: SESv2Client;
 
 	/**
-	 * Create a new instance of IAwsConnectorConfig.
+	 * Create a new instance of AwsMessagingEmailConnector.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
 	 * @param options.sesConfig The configuration for the SES connector.
@@ -58,6 +65,10 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 			options.sesConfig.secretAccessKey
 		);
 
+		if (Is.stringValue(options.loggingConnectorType)) {
+			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
+		}
+
 		this._sesConfig = options.sesConfig;
 		this._sesClient = new SESv2Client({
 			endpoint: this._sesConfig.endpoint,
@@ -72,15 +83,23 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	/**
 	 * Send a custom email using AWS SES.
 	 * @param sender The sender email address.
-	 * @param info The information for the custom email.
+	 * @param receivers An array of receivers email addresses.
+	 * @param subject The subject of the email.
+	 * @param content The html content of the email.
 	 * @returns True if the email was send successfully, otherwise undefined.
 	 */
-	public async sendCustomEmail(sender: string, info: EmailCustomType): Promise<boolean> {
+	public async sendCustomEmail(
+		sender: string,
+		receivers: string[],
+		subject: string,
+		content: string
+	): Promise<boolean> {
 		Guards.stringValue(this.CLASS_NAME, nameof(sender), sender);
-		Guards.objectValue(this.CLASS_NAME, nameof(info), info);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
+		Guards.arrayValue(this.CLASS_NAME, nameof(receivers), receivers);
+		Guards.stringValue(this.CLASS_NAME, nameof(subject), subject);
+		Guards.stringValue(this.CLASS_NAME, nameof(content), content);
 		try {
-			await nodeLogging?.log({
+			await this._logging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),
@@ -91,20 +110,20 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 			});
 			const result = await this._sesClient.send(
 				new SendEmailCommand({
-					Destination: { ToAddresses: [info.receiver] },
+					Destination: { ToAddresses: receivers },
 					Content: {
 						Simple: {
-							Subject: { Data: info.subject },
+							Subject: { Data: subject },
 							Body: {
-								Html: { Data: info.content }
+								Html: { Data: content }
 							}
 						}
 					},
 					FromEmailAddress: sender
 				})
 			);
-			if (result.$metadata.httpStatusCode !== 200) {
-				await nodeLogging?.log({
+			if (result.$metadata.httpStatusCode !== HttpStatusCode.ok) {
+				await this._logging?.log({
 					level: "error",
 					source: this.CLASS_NAME,
 					ts: Date.now(),

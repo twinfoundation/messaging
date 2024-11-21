@@ -4,3 +4,4 @@ export * from "./awsMessagingEmailConnector";
 export * from "./awsMessagingPushNotificationConnector";
 export * from "./awsMessagingSmsConnector";
 export * from "./models/IAwsConnectorConfig";
+export * from "./models/IAwsApplicationSettings";

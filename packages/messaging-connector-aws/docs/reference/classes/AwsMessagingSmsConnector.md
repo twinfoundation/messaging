@@ -12,7 +12,7 @@ Class for connecting to the SMS messaging operations of the AWS services.
 
 > **new AwsMessagingSmsConnector**(`options`): [`AwsMessagingSmsConnector`](AwsMessagingSmsConnector.md)
 
-Create a new instance of IAwsConnectorConfig.
+Create a new instance of AwsMessagingSmsConnector.
 
 #### Parameters
 

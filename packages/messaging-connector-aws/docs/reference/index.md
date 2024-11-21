@@ -8,4 +8,5 @@
 
 ## Interfaces
 
+- [IAwsApplicationSettings](interfaces/IAwsApplicationSettings.md)
 - [IAwsConnectorConfig](interfaces/IAwsConnectorConfig.md)

@@ -7,19 +7,6 @@ import type { IComponent } from "@twin.org/core";
  */
 export interface IMessagingPushNotificationsConnector extends IComponent {
 	/**
-	 * Creates a platform application to push notifications to it.
-	 * @param applicationName The name of the application.
-	 * @param platformType The type of platform used for the push notifications.
-	 * @param platformCredentials The credentials for the platform auth.
-	 * @returns The platform application address.
-	 */
-	createPlatformApplication(
-		applicationName: string,
-		platformType: string,
-		platformCredentials: string
-	): Promise<string>;
-
-	/**
 	 * Registers a device to an specific app in order to send notifications to it.
 	 * @param applicationAddress The application address.
 	 * @param deviceToken The device token.

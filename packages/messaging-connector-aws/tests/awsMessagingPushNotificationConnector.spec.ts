@@ -55,78 +55,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 		);
 	});
 
-	test("can fail to create a platform application without appName", async () => {
-		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
-		});
-		await expect(
-			messagingConnector.createPlatformApplication(
-				undefined as unknown as string,
-				"platformType",
-				"platformCredentials"
-			)
-		).rejects.toMatchObject({
-			name: "GuardError",
-			properties: {
-				property: "appName",
-				value: "undefined"
-			}
-		});
-	});
-
-	test("can fail to create a platform application without platformType", async () => {
-		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
-		});
-		await expect(
-			messagingConnector.createPlatformApplication(
-				"appName",
-				undefined as unknown as string,
-				"platformCredentials"
-			)
-		).rejects.toMatchObject({
-			name: "GuardError",
-			properties: {
-				property: "platformType",
-				value: "undefined"
-			}
-		});
-	});
-
-	test("can fail to create a platform application without platformCredentials", async () => {
-		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
-		});
-		await expect(
-			messagingConnector.createPlatformApplication(
-				"appName",
-				"platformType",
-				undefined as unknown as string
-			)
-		).rejects.toMatchObject({
-			name: "GuardError",
-			properties: {
-				property: "platformCredentials",
-				value: "undefined"
-			}
-		});
-	});
-	test("can create a platform application", async () => {
-		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
-		});
-		const appName = "TestApp";
-		const platformType = "GCM";
-		const platformCredentials = "test_credentials";
-		const result = await messagingConnector.createPlatformApplication(
-			appName,
-			platformType,
-			platformCredentials
-		);
-		expect(result).toBeDefined();
-	});
-
-	test("can fail to register a device without applicationArn", async () => {
+	test("can fail to register a device without applicationId", async () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
 			snsConfig: snsConfiguration
 		});
@@ -135,7 +64,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
-				property: "applicationAddress",
+				property: "applicationId",
 				value: "undefined"
 			}
 		});
@@ -146,7 +75,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 			snsConfig: snsConfiguration
 		});
 		await expect(
-			messagingConnector.registerDevice("applicationAddress", undefined as unknown as string)
+			messagingConnector.registerDevice("applicationId", undefined as unknown as string)
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
@@ -160,18 +89,29 @@ describe("AwsMessagingPushNotificationConnector", () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
 			snsConfig: snsConfiguration
 		});
-		const appName = "TestApp";
-		const platformType = "GCM";
-		const platformCredentials = "test_credentials";
-		const applicationArn = await messagingConnector.createPlatformApplication(
-			appName,
-			platformType,
-			platformCredentials
-		);
+		const applicationId = "TestApp";
+		await messagingConnector.start("");
 		const deviceToken = "testDeviceToken";
-		const result = await messagingConnector.registerDevice(applicationArn, deviceToken);
+		const result = await messagingConnector.registerDevice(applicationId, deviceToken);
 		expect(result).toBeDefined();
 		expect(result.length).toBeGreaterThan(0);
+	});
+
+	test("can fail to register a device without starting the app", async () => {
+		const messagingConnector = new AwsMessagingPushNotificationConnector({
+			snsConfig: snsConfiguration
+		});
+		const applicationId = "TestApp";
+		const deviceToken = "testDeviceToken";
+		await expect(
+			messagingConnector.registerDevice(applicationId, deviceToken)
+		).rejects.toMatchObject({
+			name: "GeneralError",
+			properties: {
+				property: "applicationId",
+				value: applicationId
+			}
+		});
 	});
 
 	test("can fail to send push notification without deviceAddress", async () => {
@@ -235,16 +175,10 @@ describe("AwsMessagingPushNotificationConnector", () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
 			snsConfig: snsConfiguration
 		});
-		const appName = "TestApp";
-		const platformType = "GCM";
-		const platformCredentials = "test_credentials";
-		const applicationArn = await messagingConnector.createPlatformApplication(
-			appName,
-			platformType,
-			platformCredentials
-		);
+		const applicationId = "TestApp";
+		await messagingConnector.start("");
 		const deviceToken = "testDeviceToken";
-		const deviceAddress = await messagingConnector.registerDevice(applicationArn, deviceToken);
+		const deviceAddress = await messagingConnector.registerDevice(applicationId, deviceToken);
 		const result = await messagingConnector.sendSinglePushNotification(
 			deviceAddress,
 			"Test Title",

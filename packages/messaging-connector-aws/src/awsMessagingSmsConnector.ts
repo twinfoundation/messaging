@@ -1,8 +1,8 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
 import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
-import { GeneralError, Guards } from "@twin.org/core";
-import { LoggingConnectorFactory } from "@twin.org/logging-models";
+import { GeneralError, Guards, Is } from "@twin.org/core";
+import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/logging-models";
 import type { IMessagingSmsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
@@ -17,6 +17,12 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 	public readonly CLASS_NAME: string = nameof<AwsMessagingSmsConnector>();
 
 	/**
+	 * The logging connector.
+	 * @internal
+	 */
+	protected readonly _logging?: ILoggingConnector;
+
+	/**
 	 * The configuration for the SNS connector.
 	 * @internal
 	 */
@@ -29,7 +35,7 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 	private readonly _snsClient: SNSClient;
 
 	/**
-	 * Create a new instance of IAwsConnectorConfig.
+	 * Create a new instance of AwsMessagingSmsConnector.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
 	 * @param options.snsConfig The configuration for the SNS connector.
@@ -58,6 +64,10 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 			options.snsConfig.secretAccessKey
 		);
 
+		if (Is.stringValue(options.loggingConnectorType)) {
+			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
+		}
+
 		this._snsConfig = options.snsConfig;
 		this._snsClient = new SNSClient({
 			endpoint: this._snsConfig.endpoint,
@@ -78,13 +88,12 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 	public async sendSMS(phoneNumber: string, message: string): Promise<boolean> {
 		Guards.stringValue(this.CLASS_NAME, nameof(phoneNumber), phoneNumber);
 		Guards.stringValue(this.CLASS_NAME, nameof(message), message);
-		const nodeLogging = LoggingConnectorFactory.getIfExists(this.CLASS_NAME ?? "node-logging");
 		const params = {
 			Message: message,
 			PhoneNumber: phoneNumber
 		};
 		try {
-			await nodeLogging?.log({
+			await this._logging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),
