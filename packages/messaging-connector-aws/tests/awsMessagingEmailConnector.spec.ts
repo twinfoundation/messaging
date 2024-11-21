@@ -11,12 +11,12 @@ import {
 } from "@twin.org/logging-connector-entity-storage";
 import { LoggingConnectorFactory } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
-import { TEST_AWS_SES_CONFIG } from "./setupTestEnv";
+import { TEST_AWS_CONFIG } from "./setupTestEnv";
 import { AwsMessagingEmailConnector } from "../src/awsMessagingEmailConnector";
 import type { IAwsConnectorConfig } from "../src/models/IAwsConnectorConfig";
 
 let memoryEntityStorage: MemoryEntityStorageConnector<LogEntry>;
-const sesConfiguration: IAwsConnectorConfig = TEST_AWS_SES_CONFIG;
+const configuration: IAwsConnectorConfig = TEST_AWS_CONFIG;
 
 describe("AwsMessagingEmailConnector", () => {
 	beforeAll(async () => {
@@ -40,7 +40,7 @@ describe("AwsMessagingEmailConnector", () => {
 				new AwsMessagingEmailConnector(
 					undefined as unknown as {
 						entitySchema: string;
-						sesConfig: IAwsConnectorConfig;
+						config: IAwsConnectorConfig;
 					}
 				)
 		).toThrow(
@@ -57,7 +57,7 @@ describe("AwsMessagingEmailConnector", () => {
 
 	test("can fail to send a custom email without sender", async () => {
 		const entityStorage = new AwsMessagingEmailConnector({
-			sesConfig: sesConfiguration
+			config: configuration
 		});
 		await expect(
 			entityStorage.sendCustomEmail(undefined as unknown as string, [], "Subject", "Content")
@@ -72,7 +72,7 @@ describe("AwsMessagingEmailConnector", () => {
 
 	test("can fail to send a custom email without receivers", async () => {
 		const entityStorage = new AwsMessagingEmailConnector({
-			sesConfig: sesConfiguration
+			config: configuration
 		});
 		await expect(
 			entityStorage.sendCustomEmail(
@@ -92,7 +92,7 @@ describe("AwsMessagingEmailConnector", () => {
 
 	test("can fail to send a custom email without subject", async () => {
 		const entityStorage = new AwsMessagingEmailConnector({
-			sesConfig: sesConfiguration
+			config: configuration
 		});
 		await expect(
 			entityStorage.sendCustomEmail(
@@ -112,7 +112,7 @@ describe("AwsMessagingEmailConnector", () => {
 
 	test("can fail to send a custom email without content", async () => {
 		const entityStorage = new AwsMessagingEmailConnector({
-			sesConfig: sesConfiguration
+			config: configuration
 		});
 		await expect(
 			entityStorage.sendCustomEmail(
@@ -132,7 +132,7 @@ describe("AwsMessagingEmailConnector", () => {
 
 	test("can send a custom email to a single receiver", async () => {
 		const messagingConnector = new AwsMessagingEmailConnector({
-			sesConfig: sesConfiguration
+			config: configuration
 		});
 
 		const result = await messagingConnector.sendCustomEmail(
@@ -146,7 +146,7 @@ describe("AwsMessagingEmailConnector", () => {
 
 	test("can send a custom email to multiple receivers", async () => {
 		const messagingConnector = new AwsMessagingEmailConnector({
-			sesConfig: sesConfiguration
+			config: configuration
 		});
 
 		const result = await messagingConnector.sendCustomEmail(

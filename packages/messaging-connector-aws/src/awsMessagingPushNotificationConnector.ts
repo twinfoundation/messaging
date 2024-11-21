@@ -31,16 +31,16 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	protected readonly _logging?: ILoggingConnector;
 
 	/**
-	 * The configuration for the SNS connector.
+	 * The configuration for the client connector.
 	 * @internal
 	 */
-	private readonly _snsConfig: IAwsConnectorConfig;
+	private readonly _config: IAwsConnectorConfig;
 
 	/**
 	 * The Aws SNS client.
 	 * @internal
 	 */
-	private readonly _snsClient: SNSClient;
+	private readonly _client: SNSClient;
 
 	/**
 	 * A variable to store the application ids to the address because of the AWS usage.
@@ -52,35 +52,27 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	 * Create a new instance of AwsMessagingPushNotificationConnector.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.snsConfig The configuration for the SNS connector.
+	 * @param options.config The configuration for the AWS connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; snsConfig: IAwsConnectorConfig }) {
+	constructor(options: { loggingConnectorType?: string; config: IAwsConnectorConfig }) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IAwsConnectorConfig>(
+		Guards.object<IAwsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
+		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
+		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
+		Guards.stringValue(
 			this.CLASS_NAME,
-			nameof(options.snsConfig),
-			options.snsConfig
+			nameof(options.config.accessKeyId),
+			options.config.accessKeyId
 		);
 		Guards.stringValue(
 			this.CLASS_NAME,
-			nameof(options.snsConfig.endpoint),
-			options.snsConfig.endpoint
-		);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.snsConfig.region), options.snsConfig.region);
-		Guards.stringValue(
-			this.CLASS_NAME,
-			nameof(options.snsConfig.accessKeyId),
-			options.snsConfig.accessKeyId
-		);
-		Guards.stringValue(
-			this.CLASS_NAME,
-			nameof(options.snsConfig.secretAccessKey),
-			options.snsConfig.secretAccessKey
+			nameof(options.config.secretAccessKey),
+			options.config.secretAccessKey
 		);
 		Guards.arrayValue(
 			this.CLASS_NAME,
-			nameof(options.snsConfig.applicationsSettings),
-			options.snsConfig.applicationsSettings
+			nameof(options.config.applicationsSettings),
+			options.config.applicationsSettings
 		);
 
 		if (Is.stringValue(options.loggingConnectorType)) {
@@ -88,13 +80,13 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 		}
 
 		this._applicationMap = new Map<string, string>();
-		this._snsConfig = options.snsConfig;
-		this._snsClient = new SNSClient({
-			endpoint: this._snsConfig.endpoint,
-			region: this._snsConfig.region,
+		this._config = options.config;
+		this._client = new SNSClient({
+			endpoint: this._config.endpoint,
+			region: this._config.region,
 			credentials: {
-				accessKeyId: this._snsConfig.accessKeyId,
-				secretAccessKey: this._snsConfig.secretAccessKey
+				accessKeyId: this._config.accessKeyId,
+				secretAccessKey: this._config.secretAccessKey
 			}
 		});
 	}
@@ -113,10 +105,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 				ts: Date.now(),
 				message: "nodeStarting"
 			});
-			if (
-				!this._snsConfig.applicationsSettings ||
-				this._snsConfig.applicationsSettings.length === 0
-			) {
+			if (!this._config.applicationsSettings || this._config.applicationsSettings.length === 0) {
 				await this._logging?.log({
 					level: "warn",
 					source: this.CLASS_NAME,
@@ -126,7 +115,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 				return;
 			}
 
-			for (const app of this._snsConfig.applicationsSettings) {
+			for (const app of this._config.applicationsSettings) {
 				const {
 					applicationId,
 					pushNotificationsPlatformType,
@@ -188,7 +177,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 				return existingEndpointArn;
 			}
 			const command = new CreatePlatformEndpointCommand(createEndpointParams);
-			const data = await this._snsClient.send(command);
+			const data = await this._client.send(command);
 
 			if (!data.EndpointArn) {
 				throw new GeneralError(this.CLASS_NAME, "deviceTokenRegisterFailed", {
@@ -244,7 +233,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 				MessageStructure: "json"
 			};
 			const command = new PublishCommand(publishMessageParams);
-			const data = await this._snsClient.send(command);
+			const data = await this._client.send(command);
 			if (data.$metadata.httpStatusCode !== 200) {
 				await this._logging?.log({
 					level: "error",
@@ -308,7 +297,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			};
 
 			const createCommand = new CreatePlatformApplicationCommand(createParams);
-			const createData = await this._snsClient.send(createCommand);
+			const createData = await this._client.send(createCommand);
 			if (createData.PlatformApplicationArn) {
 				this._applicationMap.set(applicationId, createData.PlatformApplicationArn);
 				return createData.PlatformApplicationArn;
@@ -334,7 +323,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 				message: "platformAppChecking"
 			});
 			const listCommand = new ListPlatformApplicationsCommand({});
-			const data = await this._snsClient.send(listCommand);
+			const data = await this._client.send(listCommand);
 			if (data.PlatformApplications) {
 				const existingApplication = data.PlatformApplications.find(app =>
 					app.PlatformApplicationArn?.includes(appName)
@@ -372,7 +361,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			const command = new ListEndpointsByPlatformApplicationCommand({
 				PlatformApplicationArn: applicationAddress
 			});
-			const data: ListEndpointsByPlatformApplicationResponse = await this._snsClient.send(command);
+			const data: ListEndpointsByPlatformApplicationResponse = await this._client.send(command);
 			if (data.Endpoints) {
 				const existingEndpoint = data.Endpoints.find(
 					endpoint => endpoint.Attributes?.Token === deviceToken

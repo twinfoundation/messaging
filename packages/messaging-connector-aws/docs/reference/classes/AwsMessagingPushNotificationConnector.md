@@ -24,9 +24,9 @@ The options for the connector.
 
 The type of logging connector to use, defaults to no logging.
 
-• **options.snsConfig**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
+• **options.config**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
 
-The configuration for the SNS connector.
+The configuration for the AWS connector.
 
 #### Returns
 

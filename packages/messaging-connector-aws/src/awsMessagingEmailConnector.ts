@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { SESClient, SendEmailCommand, VerifyEmailAddressCommand } from "@aws-sdk/client-ses";
 import { GeneralError, Guards, Is } from "@twin.org/core";
 import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/logging-models";
 import type { IMessagingEmailConnector } from "@twin.org/messaging-models";
@@ -24,58 +24,50 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	protected readonly _logging?: ILoggingConnector;
 
 	/**
-	 * The configuration for the SES connector.
+	 * The configuration for the client connector.
 	 * @internal
 	 */
-	private readonly _sesConfig: IAwsConnectorConfig;
+	private readonly _config: IAwsConnectorConfig;
 
 	/**
 	 * The Aws SES client.
 	 * @internal
 	 */
-	private readonly _sesClient: SESv2Client;
+	private readonly _client: SESClient;
 
 	/**
 	 * Create a new instance of AwsMessagingEmailConnector.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.sesConfig The configuration for the SES connector.
+	 * @param options.config The configuration for the SES connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; sesConfig: IAwsConnectorConfig }) {
+	constructor(options: { loggingConnectorType?: string; config: IAwsConnectorConfig }) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IAwsConnectorConfig>(
+		Guards.object<IAwsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
+		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
+		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
+		Guards.stringValue(
 			this.CLASS_NAME,
-			nameof(options.sesConfig),
-			options.sesConfig
+			nameof(options.config.accessKeyId),
+			options.config.accessKeyId
 		);
 		Guards.stringValue(
 			this.CLASS_NAME,
-			nameof(options.sesConfig.endpoint),
-			options.sesConfig.endpoint
-		);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.sesConfig.region), options.sesConfig.region);
-		Guards.stringValue(
-			this.CLASS_NAME,
-			nameof(options.sesConfig.accessKeyId),
-			options.sesConfig.accessKeyId
-		);
-		Guards.stringValue(
-			this.CLASS_NAME,
-			nameof(options.sesConfig.secretAccessKey),
-			options.sesConfig.secretAccessKey
+			nameof(options.config.secretAccessKey),
+			options.config.secretAccessKey
 		);
 
 		if (Is.stringValue(options.loggingConnectorType)) {
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}
 
-		this._sesConfig = options.sesConfig;
-		this._sesClient = new SESv2Client({
-			endpoint: this._sesConfig.endpoint,
-			region: this._sesConfig.region,
+		this._config = options.config;
+		this._client = new SESClient({
+			endpoint: this._config.endpoint,
+			region: this._config.region,
 			credentials: {
-				accessKeyId: this._sesConfig.accessKeyId,
-				secretAccessKey: this._sesConfig.secretAccessKey
+				accessKeyId: this._config.accessKeyId,
+				secretAccessKey: this._config.secretAccessKey
 			}
 		});
 	}
@@ -108,18 +100,22 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 					type: "Custom Email"
 				}
 			});
-			const result = await this._sesClient.send(
+			const command = new VerifyEmailAddressCommand({ EmailAddress: sender });
+			await this._client.send(command);
+			const result = await this._client.send(
 				new SendEmailCommand({
 					Destination: { ToAddresses: receivers },
-					Content: {
-						Simple: {
-							Subject: { Data: subject },
-							Body: {
-								Html: { Data: content }
+					Message: {
+						Subject: {
+							Data: subject
+						},
+						Body: {
+							Html: {
+								Data: content
 							}
 						}
 					},
-					FromEmailAddress: sender
+					Source: sender
 				})
 			);
 			if (result.$metadata.httpStatusCode !== HttpStatusCode.ok) {
@@ -133,6 +129,8 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 			}
 			return true;
 		} catch (err) {
+			// eslint-disable-next-line no-console
+			console.log(err);
 			throw new GeneralError(this.CLASS_NAME, "sendCustomEmailFailed", undefined, err);
 		}
 	}

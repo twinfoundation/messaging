@@ -10,19 +10,14 @@ npm install @twin.org/messaging-connector-aws
 
 ## Testing
 
-The tests developed are functional tests and need an AWS SES simulator and an AWS SNS simulator up and running.
+The tests developed are functional tests and need an AWS simulator with the SES and SNS services up and running.
 The AWS SNS simulator can't send real SMS messages nor push notifications but simulates the server response accordingly.
 
-To run AWS SES locally:
+To run AWS locally:
 
 ```sh
-docker run -p 8005:8005  --name twin-messaging-connector-aws-ses -d adrianmssiota/ses-local-test-server:latest
-```
 
-To run AWS SNS locally:
-
-```sh
-docker run -p 4566:4566 --name twin-messaging-connector-aws-sns -d localstack/localstack -e AWS_DEFAULT_REGION='eu-central-1' -e AWS_ACCESS_KEY_ID='test' -e AWS_SECRET_ACCESS_KEY='test' -e SERVICE='SNS'
+docker run -p 4566:4566 --name twin-messaging-connector-aws -d localstack/localstack -e AWS_DEFAULT_REGION='eu-central-1' -e AWS_ACCESS_KEY_ID='test' -e AWS_SECRET_ACCESS_KEY='test' -e SERVICE='SNS,SES'
 ```
 
 Afterwards you can run the tests as follows:

@@ -11,12 +11,12 @@ import {
 } from "@twin.org/logging-connector-entity-storage";
 import { LoggingConnectorFactory } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
-import { TEST_AWS_SNS_CONFIG } from "./setupTestEnv";
+import { TEST_AWS_CONFIG } from "./setupTestEnv";
 import { AwsMessagingSmsConnector } from "../src/awsMessagingSmsConnector";
 import type { IAwsConnectorConfig } from "../src/models/IAwsConnectorConfig";
 
 let memoryEntityStorage: MemoryEntityStorageConnector<LogEntry>;
-const snsConfiguration: IAwsConnectorConfig = TEST_AWS_SNS_CONFIG;
+const configuration: IAwsConnectorConfig = TEST_AWS_CONFIG;
 
 describe("AwsMessagingSmsConnector", () => {
 	beforeAll(async () => {
@@ -40,7 +40,7 @@ describe("AwsMessagingSmsConnector", () => {
 				new AwsMessagingSmsConnector(
 					undefined as unknown as {
 						entitySchema: string;
-						snsConfig: IAwsConnectorConfig;
+						config: IAwsConnectorConfig;
 					}
 				)
 		).toThrow(
@@ -57,7 +57,7 @@ describe("AwsMessagingSmsConnector", () => {
 
 	test("can fail to send SMS without phoneNumber", async () => {
 		const messagingConnector = new AwsMessagingSmsConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		await expect(
 			messagingConnector.sendSMS(undefined as unknown as string, "Test message")
@@ -72,7 +72,7 @@ describe("AwsMessagingSmsConnector", () => {
 
 	test("can fail to send SMS without message", async () => {
 		const messagingConnector = new AwsMessagingSmsConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		await expect(
 			messagingConnector.sendSMS("+1234567890", undefined as unknown as string)
@@ -87,7 +87,7 @@ describe("AwsMessagingSmsConnector", () => {
 
 	test("can send SMS", async () => {
 		const messagingConnector = new AwsMessagingSmsConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		const result = await messagingConnector.sendSMS("+1234567890", "Test message");
 		expect(result).toEqual(true);

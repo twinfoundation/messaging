@@ -10,11 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      aws-ses:
-        image: adrianmssiota/ses-local-test-server:latest
-        ports:
-          - 8005:8005
-
       localstack:
         image: localstack/localstack:latest
         ports:
@@ -23,7 +18,7 @@ jobs:
           AWS_DEFAULT_REGION: eu-central-1
           AWS_ACCESS_KEY_ID: test
           AWS_SECRET_ACCESS_KEY: test
-          SERVICES: sns
+          SERVICES: sns,ses
 
     steps:
       - name: Checkout

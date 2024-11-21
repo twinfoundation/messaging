@@ -23,58 +23,50 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 	protected readonly _logging?: ILoggingConnector;
 
 	/**
-	 * The configuration for the SNS connector.
+	 * The configuration for the AWS connector.
 	 * @internal
 	 */
-	private readonly _snsConfig: IAwsConnectorConfig;
+	private readonly _config: IAwsConnectorConfig;
 
 	/**
 	 * The Aws SNS client.
 	 * @internal
 	 */
-	private readonly _snsClient: SNSClient;
+	private readonly _client: SNSClient;
 
 	/**
 	 * Create a new instance of AwsMessagingSmsConnector.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.snsConfig The configuration for the SNS connector.
+	 * @param options.config The configuration for the AWS connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; snsConfig: IAwsConnectorConfig }) {
+	constructor(options: { loggingConnectorType?: string; config: IAwsConnectorConfig }) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IAwsConnectorConfig>(
+		Guards.object<IAwsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
+		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
+		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
+		Guards.stringValue(
 			this.CLASS_NAME,
-			nameof(options.snsConfig),
-			options.snsConfig
+			nameof(options.config.accessKeyId),
+			options.config.accessKeyId
 		);
 		Guards.stringValue(
 			this.CLASS_NAME,
-			nameof(options.snsConfig.endpoint),
-			options.snsConfig.endpoint
-		);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.snsConfig.region), options.snsConfig.region);
-		Guards.stringValue(
-			this.CLASS_NAME,
-			nameof(options.snsConfig.accessKeyId),
-			options.snsConfig.accessKeyId
-		);
-		Guards.stringValue(
-			this.CLASS_NAME,
-			nameof(options.snsConfig.secretAccessKey),
-			options.snsConfig.secretAccessKey
+			nameof(options.config.secretAccessKey),
+			options.config.secretAccessKey
 		);
 
 		if (Is.stringValue(options.loggingConnectorType)) {
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}
 
-		this._snsConfig = options.snsConfig;
-		this._snsClient = new SNSClient({
-			endpoint: this._snsConfig.endpoint,
-			region: this._snsConfig.region,
+		this._config = options.config;
+		this._client = new SNSClient({
+			endpoint: this._config.endpoint,
+			region: this._config.region,
 			credentials: {
-				accessKeyId: this._snsConfig.accessKeyId,
-				secretAccessKey: this._snsConfig.secretAccessKey
+				accessKeyId: this._config.accessKeyId,
+				secretAccessKey: this._config.secretAccessKey
 			}
 		});
 	}
@@ -99,7 +91,7 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 				ts: Date.now(),
 				message: "smsSending"
 			});
-			await this._snsClient.send(new PublishCommand(params));
+			await this._client.send(new PublishCommand(params));
 			return true;
 		} catch (err) {
 			throw new GeneralError(this.CLASS_NAME, "sendSMSFailed", undefined, err);

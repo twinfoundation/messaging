@@ -11,12 +11,12 @@ import {
 } from "@twin.org/logging-connector-entity-storage";
 import { LoggingConnectorFactory } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
-import { TEST_AWS_SNS_CONFIG } from "./setupTestEnv";
+import { TEST_AWS_CONFIG } from "./setupTestEnv";
 import { AwsMessagingPushNotificationConnector } from "../src/awsMessagingPushNotificationConnector";
 import type { IAwsConnectorConfig } from "../src/models/IAwsConnectorConfig";
 
 let memoryEntityStorage: MemoryEntityStorageConnector<LogEntry>;
-const snsConfiguration: IAwsConnectorConfig = TEST_AWS_SNS_CONFIG;
+const configuration: IAwsConnectorConfig = TEST_AWS_CONFIG;
 
 describe("AwsMessagingPushNotificationConnector", () => {
 	beforeAll(async () => {
@@ -40,7 +40,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 				new AwsMessagingPushNotificationConnector(
 					undefined as unknown as {
 						entitySchema: string;
-						snsConfig: IAwsConnectorConfig;
+						config: IAwsConnectorConfig;
 					}
 				)
 		).toThrow(
@@ -57,7 +57,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 
 	test("can fail to register a device without applicationId", async () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		await expect(
 			messagingConnector.registerDevice(undefined as unknown as string, "deviceToken")
@@ -72,7 +72,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 
 	test("can fail to register a device without deviceToken", async () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		await expect(
 			messagingConnector.registerDevice("applicationId", undefined as unknown as string)
@@ -87,7 +87,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 
 	test("can register a device", async () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		const applicationId = "TestApp";
 		await messagingConnector.start("");
@@ -99,7 +99,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 
 	test("can fail to register a device without starting the app", async () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		const applicationId = "TestApp";
 		const deviceToken = "testDeviceToken";
@@ -116,7 +116,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 
 	test("can fail to send push notification without deviceAddress", async () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		await expect(
 			messagingConnector.sendSinglePushNotification(
@@ -135,7 +135,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 
 	test("can fail to send push notification without title", async () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		await expect(
 			messagingConnector.sendSinglePushNotification(
@@ -154,7 +154,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 
 	test("can fail to send push notification without message", async () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		await expect(
 			messagingConnector.sendSinglePushNotification(
@@ -173,7 +173,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 
 	test("can send push notification", async () => {
 		const messagingConnector = new AwsMessagingPushNotificationConnector({
-			snsConfig: snsConfiguration
+			config: configuration
 		});
 		const applicationId = "TestApp";
 		await messagingConnector.start("");
