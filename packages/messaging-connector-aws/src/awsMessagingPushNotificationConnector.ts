@@ -105,15 +105,6 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 				ts: Date.now(),
 				message: "nodeStarting"
 			});
-			if (!this._config.applicationsSettings || this._config.applicationsSettings.length === 0) {
-				await this._logging?.log({
-					level: "warn",
-					source: this.CLASS_NAME,
-					ts: Date.now(),
-					message: "applicationSettingsMissing"
-				});
-				return;
-			}
 
 			for (const app of this._config.applicationsSettings) {
 				const {

@@ -30,5 +30,5 @@ export interface IAwsConnectorConfig {
 	/**
 	 * The applications settings for the push notifications.
 	 */
-	applicationsSettings?: IAwsApplicationSettings[];
+	applicationsSettings: IAwsApplicationSettings[];
 }

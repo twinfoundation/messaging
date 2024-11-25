@@ -36,8 +36,8 @@ The secret access key for the AWS instance.
 
 ***
 
-### applicationsSettings?
+### applicationsSettings
 
-> `optional` **applicationsSettings**: [`IAwsApplicationSettings`](IAwsApplicationSettings.md)[]
+> **applicationsSettings**: [`IAwsApplicationSettings`](IAwsApplicationSettings.md)[]
 
 The applications settings for the push notifications.
