@@ -48,7 +48,7 @@ Runtime name for the class.
 
 ### sendCustomEmail()
 
-> **sendCustomEmail**(`sender`, `receivers`, `subject`, `content`): `Promise`\<`boolean`\>
+> **sendCustomEmail**(`sender`, `recipients`, `subject`, `content`): `Promise`\<`boolean`\>
 
 Send a custom email using AWS SES.
 
@@ -58,9 +58,9 @@ Send a custom email using AWS SES.
 
 The sender email address.
 
-• **receivers**: `string`[]
+• **recipients**: `string`[]
 
-An array of receivers email addresses.
+An array of recipients email addresses.
 
 • **subject**: `string`
 

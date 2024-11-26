@@ -99,7 +99,11 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	 */
 	public async start(nodeIdentity: string, nodeLoggingConnectorType?: string): Promise<void> {
 		try {
-			await this._logging?.log({
+			const nodeLogging = LoggingConnectorFactory.getIfExists(
+				nodeLoggingConnectorType ?? "node-logging"
+			);
+
+			await nodeLogging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),
@@ -252,7 +256,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 
 	/**
 	 * Creates a platform application if it does not exist.
-	 * @param applicationId The application identificator.
+	 * @param applicationId The application identity.
 	 * @param platformType The type of platform used for the push notifications.
 	 * @param platformCredentials The credentials for the used platform.
 	 * @returns The platform application address.

@@ -8,7 +8,7 @@ Configuration for the AWS Application Settings.
 
 > **applicationId**: `string`
 
-The application identificator to send the push notifications.
+The application identity to send the push notifications.
 
 ***
 

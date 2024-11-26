@@ -75,19 +75,19 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	/**
 	 * Send a custom email using AWS SES.
 	 * @param sender The sender email address.
-	 * @param receivers An array of receivers email addresses.
+	 * @param recipients An array of recipients email addresses.
 	 * @param subject The subject of the email.
 	 * @param content The html content of the email.
 	 * @returns True if the email was send successfully, otherwise undefined.
 	 */
 	public async sendCustomEmail(
 		sender: string,
-		receivers: string[],
+		recipients: string[],
 		subject: string,
 		content: string
 	): Promise<boolean> {
 		Guards.stringValue(this.CLASS_NAME, nameof(sender), sender);
-		Guards.arrayValue(this.CLASS_NAME, nameof(receivers), receivers);
+		Guards.arrayValue(this.CLASS_NAME, nameof(recipients), recipients);
 		Guards.stringValue(this.CLASS_NAME, nameof(subject), subject);
 		Guards.stringValue(this.CLASS_NAME, nameof(content), content);
 		try {
@@ -104,7 +104,7 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 			await this._client.send(command);
 			const result = await this._client.send(
 				new SendEmailCommand({
-					Destination: { ToAddresses: receivers },
+					Destination: { ToAddresses: recipients },
 					Message: {
 						Subject: {
 							Data: subject
@@ -129,8 +129,6 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 			}
 			return true;
 		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.log(err);
 			throw new GeneralError(this.CLASS_NAME, "sendCustomEmailFailed", undefined, err);
 		}
 	}

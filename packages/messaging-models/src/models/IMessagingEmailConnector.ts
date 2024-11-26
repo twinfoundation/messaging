@@ -9,14 +9,14 @@ export interface IMessagingEmailConnector extends IComponent {
 	/**
 	 * Send a custom email.
 	 * @param sender The sender email address.
-	 * @param receivers An array of receivers email addresses.
+	 * @param recipients An array of recipients email addresses.
 	 * @param subject The subject of the email.
 	 * @param content The html content of the email.
 	 * @returns If the email was sent successfully.
 	 */
 	sendCustomEmail(
 		sender: string,
-		receivers: string[],
+		recipients: string[],
 		subject: string,
 		content: string
 	): Promise<boolean>;
