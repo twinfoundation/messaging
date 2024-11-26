@@ -1,0 +1,13 @@
+{
+	"info": {
+		"entityStorageMessagingConnector": {
+			"emailSending": "Sending email"
+		}
+	},
+	"error": {
+		"entityStorageMessagingConnector": {
+			"sendCustomEmailFailed": "Failed to send custom email",
+			"readEmailEntryFailed": "Failed to read email entry"
+		}
+	}
+}
