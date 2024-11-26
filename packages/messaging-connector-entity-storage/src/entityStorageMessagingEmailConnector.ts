@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { GeneralError, Guards, Is } from "@twin.org/core";
+import { Converter, GeneralError, Guards, Is, RandomHelper } from "@twin.org/core";
 import {
 	EntityStorageConnectorFactory,
 	type IEntityStorageConnector
@@ -30,13 +30,7 @@ export class EntityStorageMessagingEmailConnector implements IMessagingEmailConn
 	 * The entity storage for the emails entries.
 	 * @internal
 	 */
-	private readonly _logEntryStorage: IEntityStorageConnector<EmailEntry>;
-
-	/**
-	 * The incremental id for the entries.
-	 * @internal
-	 */
-	private _idEntryStorage: number;
+	private readonly _messagingEntryStorage: IEntityStorageConnector<EmailEntry>;
 
 	/**
 	 * Create a new instance of EntityStorageMessagingEmailConnector.
@@ -53,10 +47,9 @@ export class EntityStorageMessagingEmailConnector implements IMessagingEmailConn
 		if (Is.stringValue(options?.loggingConnectorType)) {
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}
-		this._logEntryStorage = EntityStorageConnectorFactory.get(
-			options?.messagingEntryStorageConnectorType ?? "messaging-entry"
+		this._messagingEntryStorage = EntityStorageConnectorFactory.get(
+			options?.messagingEntryStorageConnectorType ?? "email-messaging-entry"
 		);
-		this._idEntryStorage = 0;
 	}
 
 	/**
@@ -87,9 +80,11 @@ export class EntityStorageMessagingEmailConnector implements IMessagingEmailConn
 					type: "Custom Email"
 				}
 			});
-			this._idEntryStorage++;
+
+			const id = Converter.bytesToHex(RandomHelper.generate(32));
+
 			const entity: EmailEntry = {
-				id: this._idEntryStorage.toString(),
+				id,
 				sender,
 				recipients,
 				ts: Date.now(),
@@ -98,37 +93,11 @@ export class EntityStorageMessagingEmailConnector implements IMessagingEmailConn
 				status: "pending"
 			};
 
-			await this._logEntryStorage.set(entity);
+			await this._messagingEntryStorage.set(entity);
 
 			return true;
 		} catch (err) {
 			throw new GeneralError(this.CLASS_NAME, "sendCustomEmailFailed", undefined, err);
-		}
-	}
-
-	/**
-	 * Read a saved email entry by its id.
-	 * @param id The id of the email entry.
-	 * @returns The email entry if found, otherwise undefined.
-	 * @internal
-	 */
-	public async readEmailEntry(id: string): Promise<EmailEntry | undefined> {
-		Guards.stringValue(this.CLASS_NAME, nameof(id), id);
-		try {
-			const emailEntry = await this._logEntryStorage.get(id);
-			return emailEntry;
-		} catch (err) {
-			await this._logging?.log({
-				level: "error",
-				source: this.CLASS_NAME,
-				ts: Date.now(),
-				message: "readEmailEntryFailed",
-				data: {
-					id,
-					error: (err as Error).message
-				}
-			});
-			return undefined;
 		}
 	}
 }

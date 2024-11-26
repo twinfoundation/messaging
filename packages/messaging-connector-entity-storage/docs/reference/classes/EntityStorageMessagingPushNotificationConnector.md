@@ -1,6 +1,6 @@
-# Class: AwsMessagingPushNotificationConnector
+# Class: EntityStorageMessagingPushNotificationConnector
 
-Class for connecting to the push notifications messaging operations of the AWS services.
+Class for connecting to the push notifications messaging operations of the Entity Storage.
 
 ## Implements
 
@@ -8,15 +8,15 @@ Class for connecting to the push notifications messaging operations of the AWS s
 
 ## Constructors
 
-### new AwsMessagingPushNotificationConnector()
+### new EntityStorageMessagingPushNotificationConnector()
 
-> **new AwsMessagingPushNotificationConnector**(`options`): [`AwsMessagingPushNotificationConnector`](AwsMessagingPushNotificationConnector.md)
+> **new EntityStorageMessagingPushNotificationConnector**(`options`?): [`EntityStorageMessagingPushNotificationConnector`](EntityStorageMessagingPushNotificationConnector.md)
 
-Create a new instance of AwsMessagingPushNotificationConnector.
+Create a new instance of EntityStorageMessagingPushNotificationConnector.
 
 #### Parameters
 
-• **options**
+• **options?**
 
 The options for the connector.
 
@@ -24,13 +24,17 @@ The options for the connector.
 
 The type of logging connector to use, defaults to no logging.
 
-• **options.config**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
+• **options.messagingEntryStorageConnectorType?**: `string`
 
-The configuration for the AWS connector.
+The type of entity storage connector to use for the push notifications entries.
+
+• **options.config?**: `IMessagingPushNotificationsConnector`
+
+The configuration for the push notifications connector.
 
 #### Returns
 
-[`AwsMessagingPushNotificationConnector`](AwsMessagingPushNotificationConnector.md)
+[`EntityStorageMessagingPushNotificationConnector`](EntityStorageMessagingPushNotificationConnector.md)
 
 ## Properties
 

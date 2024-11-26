@@ -11,7 +11,7 @@ describe("EntityStorageMessagingEmailConnector", () => {
 	beforeAll(() => {
 		initSchema();
 		EntityStorageConnectorFactory.register(
-			"messaging-entry",
+			"email-messaging-entry",
 			() =>
 				new MemoryEntityStorageConnector<EmailEntry>({
 					entitySchema: nameof<EmailEntry>()
@@ -26,48 +26,87 @@ describe("EntityStorageMessagingEmailConnector", () => {
 
 	test("throws error when sending email with invalid sender", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "messaging-entry"
+			messagingEntryStorageConnectorType: "email-messaging-entry"
 		});
 		await expect(
-			storage.sendCustomEmail("", ["recipient@example.com"], "Test Subject", "<p>Test Content</p>")
-		).rejects.toThrow();
+			storage.sendCustomEmail(
+				undefined as unknown as string,
+				["recipient@example.com"],
+				"Test Subject",
+				"<p>Test Content</p>"
+			)
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "sender",
+				value: "undefined"
+			}
+		});
 	});
 
 	test("throws error when sending email with invalid recipients", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "messaging-entry"
+			messagingEntryStorageConnectorType: "email-messaging-entry"
 		});
 		await expect(
-			storage.sendCustomEmail("sender@example.com", [], "Test Subject", "<p>Test Content</p>")
-		).rejects.toThrow();
+			storage.sendCustomEmail(
+				"sender@example.com",
+				undefined as unknown as string[],
+				"Test Subject",
+				"<p>Test Content</p>"
+			)
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "recipients",
+				value: "undefined"
+			}
+		});
 	});
 
 	test("throws error when sending email with invalid subject", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "messaging-entry"
+			messagingEntryStorageConnectorType: "email-messaging-entry"
 		});
 		await expect(
 			storage.sendCustomEmail(
 				"sender@example.com",
 				["recipient@example.com"],
-				"",
+				undefined as unknown as string,
 				"<p>Test Content</p>"
 			)
-		).rejects.toThrow();
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "subject",
+				value: "undefined"
+			}
+		});
 	});
 
 	test("throws error when sending email with invalid content", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "messaging-entry"
+			messagingEntryStorageConnectorType: "email-messaging-entry"
 		});
 		await expect(
-			storage.sendCustomEmail("sender@example.com", ["recipient@example.com"], "Test Subject", "")
-		).rejects.toThrow();
+			storage.sendCustomEmail(
+				"sender@example.com",
+				["recipient@example.com"],
+				"Test Subject",
+				undefined as unknown as string
+			)
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "content",
+				value: "undefined"
+			}
+		});
 	});
 
 	test("can send custom email", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "messaging-entry"
+			messagingEntryStorageConnectorType: "email-messaging-entry"
 		});
 		const result = await storage.sendCustomEmail(
 			"sender@example.com",
@@ -76,11 +115,12 @@ describe("EntityStorageMessagingEmailConnector", () => {
 			"<p>Test Content</p>"
 		);
 		expect(result).toBe(true);
-		const emailEntry = await storage.readEmailEntry("1");
-		expect(emailEntry).toBeDefined();
-		expect(emailEntry?.sender).toBe("sender@example.com");
-		expect(emailEntry?.recipients).toEqual(["recipient@example.com"]);
-		expect(emailEntry?.subject).toBe("Test Subject");
-		expect(emailEntry?.message).toBe("<p>Test Content</p>");
+		const entries = await EntityStorageConnectorFactory.get("email-messaging-entry").query();
+		expect(entries.entities).toBeDefined();
+		expect(entries.entities.length).toBe(1);
+		expect((entries.entities[0] as EmailEntry).sender).toBe("sender@example.com");
+		expect((entries.entities[0] as EmailEntry).recipients).toStrictEqual(["recipient@example.com"]);
+		expect((entries.entities[0] as EmailEntry).subject).toBe("Test Subject");
+		expect((entries.entities[0] as EmailEntry).message).toBe("<p>Test Content</p>");
 	});
 });

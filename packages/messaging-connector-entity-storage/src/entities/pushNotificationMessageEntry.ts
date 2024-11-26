@@ -4,10 +4,10 @@ import type { IError } from "@twin.org/core";
 import { entity, property } from "@twin.org/entity";
 
 /**
- * Call defining an email entry.
+ * Call defining an push notification message entry.
  */
 @entity()
-export class EmailEntry {
+export class PushNotificationMessageEntry {
 	/**
 	 * The id.
 	 */
@@ -15,22 +15,16 @@ export class EmailEntry {
 	public id!: string;
 
 	/**
-	 * The sender email address.
+	 * The device address.
 	 */
 	@property({ type: "string" })
-	public sender!: string;
+	public deviceAddress!: string;
 
 	/**
-	 * The recipient email addresses.
+	 * The title.
 	 */
-	@property({ type: "array", itemType: "string" })
-	public recipients!: string[];
-
-	/**
-	 * The timestamp of the email entry.
-	 */
-	@property({ type: "integer" })
-	public ts!: number;
+	@property({ type: "string" })
+	public title!: string;
 
 	/**
 	 * The message.
@@ -39,10 +33,10 @@ export class EmailEntry {
 	public message!: string;
 
 	/**
-	 * The subject.
+	 * The timestamp of the push notification entry.
 	 */
-	@property({ type: "string" })
-	public subject!: string;
+	@property({ type: "integer" })
+	public ts!: number;
 
 	/**
 	 * The status.
