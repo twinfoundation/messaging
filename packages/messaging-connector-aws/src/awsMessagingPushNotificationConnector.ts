@@ -13,6 +13,7 @@ import { GeneralError, Guards, Is } from "@twin.org/core";
 import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/logging-models";
 import type { IMessagingPushNotificationsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
+import { HttpStatusCode } from "@twin.org/web";
 import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
 
 /**
@@ -155,7 +156,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			});
 
 			const applicationArn = this._applicationMap.get(applicationId);
-			if (!applicationArn) {
+			if (Is.empty(applicationArn)) {
 				throw new GeneralError(this.CLASS_NAME, "applicationIdNotFound", {
 					property: "applicationId",
 					value: applicationId
@@ -168,13 +169,13 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			};
 			const existingEndpointArn = await this.checkIfDeviceTokenExists(applicationArn, deviceToken);
 
-			if (existingEndpointArn) {
+			if (Is.stringValue(existingEndpointArn)) {
 				return existingEndpointArn;
 			}
 			const command = new CreatePlatformEndpointCommand(createEndpointParams);
 			const data = await this._client.send(command);
 
-			if (!data.EndpointArn) {
+			if (!Is.stringValue(data.EndpointArn)) {
 				throw new GeneralError(this.CLASS_NAME, "deviceTokenRegisterFailed", {
 					property: "applicationId",
 					value: applicationId
@@ -229,7 +230,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			};
 			const command = new PublishCommand(publishMessageParams);
 			const data = await this._client.send(command);
-			if (data.$metadata.httpStatusCode !== 200) {
+			if (data.$metadata.httpStatusCode !== HttpStatusCode.ok) {
 				await this._logging?.log({
 					level: "error",
 					source: this.CLASS_NAME,
@@ -271,7 +272,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 		Guards.stringValue(this.CLASS_NAME, nameof(platformCredentials), platformCredentials);
 		try {
 			const existingArn = await this.checkPlatformApplication(applicationId);
-			if (existingArn) {
+			if (Is.stringValue(existingArn)) {
 				this._applicationMap.set(applicationId, existingArn);
 				return existingArn;
 			}
@@ -293,7 +294,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 
 			const createCommand = new CreatePlatformApplicationCommand(createParams);
 			const createData = await this._client.send(createCommand);
-			if (createData.PlatformApplicationArn) {
+			if (Is.stringValue(createData.PlatformApplicationArn)) {
 				this._applicationMap.set(applicationId, createData.PlatformApplicationArn);
 				return createData.PlatformApplicationArn;
 			}
@@ -319,12 +320,12 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			});
 			const listCommand = new ListPlatformApplicationsCommand({});
 			const data = await this._client.send(listCommand);
-			if (data.PlatformApplications) {
+			if (Is.arrayValue(data.PlatformApplications)) {
 				const existingApplication = data.PlatformApplications.find(app =>
 					app.PlatformApplicationArn?.includes(appName)
 				);
 
-				if (existingApplication?.PlatformApplicationArn) {
+				if (Is.stringValue(existingApplication?.PlatformApplicationArn)) {
 					return existingApplication.PlatformApplicationArn;
 				}
 			}
@@ -357,12 +358,12 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 				PlatformApplicationArn: applicationAddress
 			});
 			const data: ListEndpointsByPlatformApplicationResponse = await this._client.send(command);
-			if (data.Endpoints) {
+			if (Is.arrayValue(data.Endpoints)) {
 				const existingEndpoint = data.Endpoints.find(
 					endpoint => endpoint.Attributes?.Token === deviceToken
 				);
 
-				if (existingEndpoint) {
+				if (!Is.empty(existingEndpoint)) {
 					return existingEndpoint.EndpointArn;
 				}
 			}
