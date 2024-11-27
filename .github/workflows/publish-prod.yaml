@@ -10,6 +10,7 @@ on:
         options:
           - messaging-models
           - messaging-connector-aws
+          - messaging-connector-entity-storage
 jobs:
   publish:
     runs-on: ubuntu-latest

@@ -40,7 +40,8 @@
 	},
 	"workspaces": [
 		"packages/messaging-models",
-		"packages/messaging-connector-aws"
+		"packages/messaging-connector-aws",
+		"packages/messaging-connector-entity-storage"
 	],
 	"type": "module"
 }

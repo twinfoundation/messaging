@@ -17,7 +17,7 @@ import { HttpStatusCode } from "@twin.org/web";
 import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
 
 /**
- * Class for connecting to the email messaging operations of the AWS services.
+ * Class for connecting to the push notifications messaging operations of the AWS services.
  */
 export class AwsMessagingPushNotificationConnector implements IMessagingPushNotificationsConnector {
 	/**
