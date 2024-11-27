@@ -57,34 +57,11 @@ export class EntityStorageMessagingPushNotificationConnector
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}
 		this._messagingDeviceEntryStorage = EntityStorageConnectorFactory.get(
-			options?.messagingEntryStorageConnectorType ?? "push-notifications-device-messaging-entry"
+			options?.messagingEntryStorageConnectorType ?? "push-notifications-device-entry"
 		);
 		this._messagingMessageEntryStorage = EntityStorageConnectorFactory.get(
-			options?.messagingEntryStorageConnectorType ?? "push-notifications-message-messaging-entry"
+			options?.messagingEntryStorageConnectorType ?? "push-notifications-message-entry"
 		);
-	}
-
-	/**
-	 * The component needs to be started when the node is initialized.
-	 * @param nodeIdentity The identity of the node starting the component.
-	 * @param nodeLoggingConnectorType The node logging connector type, defaults to "node-logging".
-	 * @returns Nothing.
-	 */
-	public async start(nodeIdentity: string, nodeLoggingConnectorType?: string): Promise<void> {
-		try {
-			const nodeLogging = LoggingConnectorFactory.getIfExists(
-				nodeLoggingConnectorType ?? "node-logging"
-			);
-
-			await nodeLogging?.log({
-				level: "info",
-				source: this.CLASS_NAME,
-				ts: Date.now(),
-				message: "nodeStarting"
-			});
-		} catch (err) {
-			throw new GeneralError(this.CLASS_NAME, "applicationRegistrationFailed", undefined, err);
-		}
 	}
 
 	/**

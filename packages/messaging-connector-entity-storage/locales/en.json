@@ -2,14 +2,18 @@
 	"info": {
 		"entityStorageMessagingConnector": {
 			"emailSending": "Sending email",
-			"smsSending": "Sending SMS"
+			"smsSending": "Sending SMS",
+			"deviceRegistering": "Registering device",
+			"pushNotificationSending": "Sending push notification"
 		}
 	},
 	"error": {
 		"entityStorageMessagingConnector": {
 			"sendCustomEmailFailed": "Failed to send custom email",
 			"readEmailEntryFailed": "Failed to read email entry",
-			"sendSMSFailed": "Failed to send SMS"
+			"sendSMSFailed": "Failed to send SMS",
+			"deviceTokenRegisterFailed": "Failed to register device token",
+			"sendPushNotificationFailed": "Failed to send push notification"
 		}
 	}
 }

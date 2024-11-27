@@ -48,7 +48,7 @@ export class EntityStorageMessagingSmsConnector implements IMessagingSmsConnecto
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}
 		this._messagingEntryStorage = EntityStorageConnectorFactory.get(
-			options?.messagingEntryStorageConnectorType ?? "sms-messaging-entry"
+			options?.messagingEntryStorageConnectorType ?? "sms-entry"
 		);
 	}
 

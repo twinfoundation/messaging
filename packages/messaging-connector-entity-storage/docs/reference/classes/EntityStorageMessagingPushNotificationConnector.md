@@ -50,34 +50,6 @@ Runtime name for the class.
 
 ## Methods
 
-### start()
-
-> **start**(`nodeIdentity`, `nodeLoggingConnectorType`?): `Promise`\<`void`\>
-
-The component needs to be started when the node is initialized.
-
-#### Parameters
-
-• **nodeIdentity**: `string`
-
-The identity of the node starting the component.
-
-• **nodeLoggingConnectorType?**: `string`
-
-The node logging connector type, defaults to "node-logging".
-
-#### Returns
-
-`Promise`\<`void`\>
-
-Nothing.
-
-#### Implementation of
-
-`IMessagingPushNotificationsConnector.start`
-
-***
-
 ### registerDevice()
 
 > **registerDevice**(`applicationId`, `deviceToken`): `Promise`\<`string`\>

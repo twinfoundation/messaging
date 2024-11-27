@@ -48,7 +48,7 @@ export class EntityStorageMessagingEmailConnector implements IMessagingEmailConn
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}
 		this._messagingEntryStorage = EntityStorageConnectorFactory.get(
-			options?.messagingEntryStorageConnectorType ?? "email-messaging-entry"
+			options?.messagingEntryStorageConnectorType ?? "email-entry"
 		);
 	}
 
