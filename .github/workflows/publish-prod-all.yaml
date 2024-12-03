@@ -24,7 +24,13 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        package: [messaging-models, messaging-connector-aws, messaging-connector-entity-storage]
+        package:
+          [
+            messaging-models,
+            messaging-connector-aws,
+            messaging-connector-entity-storage,
+            messaging-service
+          ]
 
     steps:
       - name: Checkout

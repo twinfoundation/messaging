@@ -59,10 +59,11 @@ export class MessagingPushNotificationService implements IMessagingPushNotificat
 	 * @returns If the device was registered successfully.
 	 */
 	public async registerDevice(
-    applicationId: string,
-    deviceToken: string,
+		applicationId: string,
+		deviceToken: string,
 		userIdentity?: string,
-		nodeIdentity?: string): Promise<string> {
+		nodeIdentity?: string
+	): Promise<string> {
 		Guards.stringValue(this.CLASS_NAME, nameof(applicationId), applicationId);
 		Guards.stringValue(this.CLASS_NAME, nameof(deviceToken), deviceToken);
 

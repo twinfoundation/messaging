@@ -26,10 +26,7 @@ describe("MessagingPushNotificationService", () => {
 			messagingConnectorType: "messaging-push-notification"
 		});
 		await expect(
-			service.registerDevice(
-				undefined as unknown as string,
-				"deviceToken"
-			)
+			service.registerDevice(undefined as unknown as string, "deviceToken")
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
@@ -44,10 +41,7 @@ describe("MessagingPushNotificationService", () => {
 			messagingConnectorType: "messaging-push-notification"
 		});
 		await expect(
-			service.registerDevice(
-				"applicationId",
-				undefined as unknown as string
-			)
+			service.registerDevice("applicationId", undefined as unknown as string)
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
@@ -71,79 +65,67 @@ describe("MessagingPushNotificationService", () => {
 		const result = await service.registerDevice("applicationId", "deviceToken");
 
 		expect(result).toBeDefined();
-    expect(result.length).toBeGreaterThan(1);
+		expect(result.length).toBeGreaterThan(1);
 	});
 
-  test("throws error when sending a push notification with invalid deviceAddress", async () => {
-    const service = new MessagingPushNotificationService({
-      messagingConnectorType: "messaging-push-notification"
-    });
-    await expect(
-      service.sendSinglePushNotification(
-        undefined as unknown as string,
-        "title",
-        "message"
-      )
-    ).rejects.toMatchObject({
-      name: "GuardError",
-      properties: {
-        property: "deviceAddress",
-        value: "undefined"
-      }
-    });
-  });
+	test("throws error when sending a push notification with invalid deviceAddress", async () => {
+		const service = new MessagingPushNotificationService({
+			messagingConnectorType: "messaging-push-notification"
+		});
+		await expect(
+			service.sendSinglePushNotification(undefined as unknown as string, "title", "message")
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "deviceAddress",
+				value: "undefined"
+			}
+		});
+	});
 
-  test("throws error when sending a push notification with invalid title", async () => {
-    const service = new MessagingPushNotificationService({
-      messagingConnectorType: "messaging-push-notification"
-    });
-    await expect(
-      service.sendSinglePushNotification(
-        "deviceAddress",
-        undefined as unknown as string,
-        "message"
-      )
-    ).rejects.toMatchObject({
-      name: "GuardError",
-      properties: {
-        property: "title",
-        value: "undefined"
-      }
-    });
-  });
+	test("throws error when sending a push notification with invalid title", async () => {
+		const service = new MessagingPushNotificationService({
+			messagingConnectorType: "messaging-push-notification"
+		});
+		await expect(
+			service.sendSinglePushNotification("deviceAddress", undefined as unknown as string, "message")
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "title",
+				value: "undefined"
+			}
+		});
+	});
 
-  test("throws error when sending a push notification with invalid message", async () => {
-    const service = new MessagingPushNotificationService({
-      messagingConnectorType: "messaging-push-notification"
-    });
-    await expect(
-      service.sendSinglePushNotification(
-        "deviceAddress",
-        "title",
-        undefined as unknown as string
-      )
-    ).rejects.toMatchObject({
-      name: "GuardError",
-      properties: {
-        property: "message",
-        value: "undefined"
-      }
-    });
-  });
+	test("throws error when sending a push notification with invalid message", async () => {
+		const service = new MessagingPushNotificationService({
+			messagingConnectorType: "messaging-push-notification"
+		});
+		await expect(
+			service.sendSinglePushNotification("deviceAddress", "title", undefined as unknown as string)
+		).rejects.toMatchObject({
+			name: "GuardError",
+			properties: {
+				property: "message",
+				value: "undefined"
+			}
+		});
+	});
 
-  test("can successfully send a push notification with valid inputs", async () => {
-    MessagingPushNotificationsConnectorFactory.register(
-      "messaging-push-notification",
-      () =>
-        ({
-          sendSinglePushNotification: async () => true
-        }) as unknown as IMessagingPushNotificationsConnector
-    );
-    const service = new MessagingPushNotificationService({
-      messagingConnectorType: "messaging-push-notification"
-    });
-    const result = await service.sendSinglePushNotification("deviceAddress", "title", "message");
+	test("can successfully send a push notification with valid inputs", async () => {
+		MessagingPushNotificationsConnectorFactory.register(
+			"messaging-push-notification",
+			() =>
+				({
+					sendSinglePushNotification: async () => true
+				}) as unknown as IMessagingPushNotificationsConnector
+		);
+		const service = new MessagingPushNotificationService({
+			messagingConnectorType: "messaging-push-notification"
+		});
+		const result = await service.sendSinglePushNotification("deviceAddress", "title", "message");
 
-    expect(result).toBe(true);
-  });
+		expect(result).toBe(true);
+	});
 });

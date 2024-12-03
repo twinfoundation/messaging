@@ -11,6 +11,7 @@ on:
           - messaging-models
           - messaging-connector-aws
           - messaging-connector-entity-storage
+          - messaging-service
 jobs:
   publish:
     runs-on: ubuntu-latest
