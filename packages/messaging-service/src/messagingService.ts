@@ -48,26 +48,35 @@ export class MessagingService implements IMessagingComponent {
 	 * Entity storage connector used by the service.
 	 * @internal
 	 */
-	private readonly _entityStorageConnector: IEntityStorageConnector;
+	private readonly _entityStorageConnector: IEntityStorageConnector<TemplateEntry>;
 
 	/**
 	 * Create a new instance of MessagingService.
 	 * @param options The options for the connector.
-	 * @param options.messagingConnectorType The type of the messaging connector to use, defaults to "messaging".
-	 * @param options.config The configuration for the messaging service.
+	 * @param options.messagingEmailConnectorType The type of the email messaging connector to use, defaults to "messaging-email".
+	 * @param options.messagingPushNotificationConnectorType The type of the push notifications messaging connector to use, defaults to "messaging-push-notification".
+	 * @param options.messagingSmsConnectorType The type of the sms messaging connector to use, defaults to "messaging-sms".
+	 * @param options.templateEntryStorageConnectorType The type of the entity connector to use, defaults to "messaging-templates".
 	 */
-	constructor(options?: { messagingConnectorType?: string; config?: unknown }) {
+	constructor(options?: {
+		messagingEmailConnectorType?: string;
+		messagingPushNotificationConnectorType?: string;
+		messagingSmsConnectorType?: string;
+		templateEntryStorageConnectorType?: string;
+	}) {
 		this._emailMessagingConnector = MessagingEmailConnectorFactory.get(
-			options?.messagingConnectorType ?? "messaging-email"
+			options?.messagingEmailConnectorType ?? "messaging-email"
 		);
 		this._pushNotificationMessagingConnector = MessagingPushNotificationsConnectorFactory.get(
-			options?.messagingConnectorType ?? "messaging-push-notification"
+			options?.messagingPushNotificationConnectorType ?? "messaging-push-notification"
 		);
 		this._smsMessagingConnector = MessagingSmsConnectorFactory.get(
-			options?.messagingConnectorType ?? "messaging-sms"
+			options?.messagingSmsConnectorType ?? "messaging-sms"
 		);
 
-		this._entityStorageConnector = EntityStorageConnectorFactory.get("messaging-templates");
+		this._entityStorageConnector = EntityStorageConnectorFactory.get(
+			options?.templateEntryStorageConnectorType ?? "messaging-templates"
+		);
 	}
 
 	/**
@@ -89,10 +98,10 @@ export class MessagingService implements IMessagingComponent {
 		Guards.stringValue(this.CLASS_NAME, nameof(sender), sender);
 		Guards.arrayValue(this.CLASS_NAME, nameof(recipients), recipients);
 		Guards.stringValue(this.CLASS_NAME, nameof(templateId), templateId);
-		Guards.objectValue(this.CLASS_NAME, nameof(data), data);
+		Guards.object(this.CLASS_NAME, nameof(data), data);
 		Guards.stringValue(this.CLASS_NAME, nameof(locale), locale);
 
-		const template = await this._getTemplate(templateId, locale);
+		const template = await this.getTemplate(templateId, locale);
 		const populatedTemplate = this._populateTemplate(template, data);
 		return this._emailMessagingConnector.sendCustomEmail(
 			sender,
@@ -131,10 +140,10 @@ export class MessagingService implements IMessagingComponent {
 	): Promise<boolean> {
 		Guards.stringValue(this.CLASS_NAME, nameof(deviceAddress), deviceAddress);
 		Guards.stringValue(this.CLASS_NAME, nameof(templateId), templateId);
-		Guards.objectValue(this.CLASS_NAME, nameof(data), data);
+		Guards.object(this.CLASS_NAME, nameof(data), data);
 		Guards.stringValue(this.CLASS_NAME, nameof(locale), locale);
 
-		const template = await this._getTemplate(templateId, locale);
+		const template = await this.getTemplate(templateId, locale);
 		const populatedTemplate = this._populateTemplate(template, data);
 
 		return this._pushNotificationMessagingConnector.sendSinglePushNotification(
@@ -160,10 +169,10 @@ export class MessagingService implements IMessagingComponent {
 	): Promise<boolean> {
 		Guards.stringValue(this.CLASS_NAME, nameof(phoneNumber), phoneNumber);
 		Guards.stringValue(this.CLASS_NAME, nameof(templateId), templateId);
-		Guards.objectValue(this.CLASS_NAME, nameof(data), data);
+		Guards.object(this.CLASS_NAME, nameof(data), data);
 		Guards.stringValue(this.CLASS_NAME, nameof(locale), locale);
 
-		const template = await this._getTemplate(templateId, locale);
+		const template = await this.getTemplate(templateId, locale);
 		const populatedTemplate = this._populateTemplate(template, data);
 
 		return this._smsMessagingConnector.sendSMS(phoneNumber, populatedTemplate.content);
@@ -189,16 +198,12 @@ export class MessagingService implements IMessagingComponent {
 		Guards.stringValue(this.CLASS_NAME, nameof(content), content);
 
 		const templateEntry = new TemplateEntry();
-		templateEntry.id = templateId;
+		templateEntry.id = `${templateId}:${locale}`;
 		templateEntry.ts = Date.now();
 		templateEntry.title = title;
 		templateEntry.content = content;
 
 		await this._entityStorageConnector.set(templateEntry);
-		const result = await this._entityStorageConnector.set(templateEntry);
-		// eslint-disable-next-line no-console
-		console.log(result);
-
 		return true;
 	}
 
@@ -206,19 +211,18 @@ export class MessagingService implements IMessagingComponent {
 	 * Get the email template by id and locale.
 	 * @param templateId The id of the email template.
 	 * @param locale The locale of the email template.
+	 * @internal
 	 * @returns The email template.
 	 */
-	public async _getTemplate(
+	private async getTemplate(
 		templateId: string,
 		locale: string
 	): Promise<{ title: string; content: string }> {
-		const templateInfo = (await this._entityStorageConnector.get(templateId)) as {
-			title: string;
-			content: string;
-		};
+		const entityId = `${templateId}:${locale}`;
+		const templateInfo = await this._entityStorageConnector.get(entityId);
 
 		if (!templateInfo) {
-			throw new GeneralError(this.CLASS_NAME, "getTemplateFailed", undefined, "Template not found");
+			throw new GeneralError(this.CLASS_NAME, "getTemplateFailed", undefined);
 		}
 		return templateInfo;
 	}

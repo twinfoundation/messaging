@@ -20,13 +20,21 @@ Create a new instance of MessagingService.
 
 The options for the connector.
 
-• **options.messagingConnectorType?**: `string`
+• **options.messagingEmailConnectorType?**: `string`
 
-The type of the messaging connector to use, defaults to "messaging".
+The type of the email messaging connector to use, defaults to "messaging-email".
 
-• **options.config?**: `unknown`
+• **options.messagingPushNotificationConnectorType?**: `string`
 
-The configuration for the messaging service.
+The type of the push notifications messaging connector to use, defaults to "messaging-push-notification".
+
+• **options.messagingSmsConnectorType?**: `string`
+
+The type of the sms messaging connector to use, defaults to "messaging-sms".
+
+• **options.templateEntryStorageConnectorType?**: `string`
+
+The type of the entity connector to use, defaults to "messaging-templates".
 
 #### Returns
 
@@ -215,35 +223,3 @@ The content of the template.
 `Promise`\<`boolean`\>
 
 If the template was created or updated successfully.
-
-***
-
-### \_getTemplate()
-
-> **\_getTemplate**(`templateId`, `locale`): `Promise`\<`object`\>
-
-Get the email template by id and locale.
-
-#### Parameters
-
-• **templateId**: `string`
-
-The id of the email template.
-
-• **locale**: `string`
-
-The locale of the email template.
-
-#### Returns
-
-`Promise`\<`object`\>
-
-The email template.
-
-##### title
-
-> **title**: `string`
-
-##### content
-
-> **content**: `string`

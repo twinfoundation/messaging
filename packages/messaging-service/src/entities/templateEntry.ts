@@ -1,10 +1,9 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type { IError } from "@twin.org/core";
 import { entity, property } from "@twin.org/entity";
 
 /**
- *
+ * Call defining a template message entry.
  */
 @entity()
 export class TemplateEntry {
@@ -31,10 +30,4 @@ export class TemplateEntry {
 	 */
 	@property({ type: "integer" })
 	public ts!: number;
-
-	/**
-	 * The error.
-	 */
-	@property({ type: "object" })
-	public error?: IError;
 }

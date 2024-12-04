@@ -128,7 +128,7 @@ describe("MessagingService", () => {
 				"sender@example.com",
 				["recipient@example.com"],
 				"templateId",
-				{ name: "name" },
+				{},
 				undefined as unknown as string
 			)
 		).rejects.toMatchObject({
@@ -469,12 +469,12 @@ describe("MessagingService", () => {
 				})
 		);
 		const service = new MessagingService();
-		await service.createOrUpdateTemplate("templateId", "en", "Test Title", "Test Content");
-
-		const result = await service._getTemplate("templateId", "en");
-		expect(result).toMatchObject({
-			title: "Test Title",
-			content: "Test Content"
-		});
+		const result = await service.createOrUpdateTemplate(
+			"templateId",
+			"en",
+			"Test Title",
+			"Test Content"
+		);
+		expect(result).toBe(true);
 	});
 });
