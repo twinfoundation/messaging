@@ -2,10 +2,4 @@
 
 ## Classes
 
-- [MessagingEmailService](classes/MessagingEmailService.md)
-- [MessagingPushNotificationService](classes/MessagingPushNotificationService.md)
-- [MessagingSmsService](classes/MessagingSmsService.md)
-
-## Interfaces
-
-- [IMessagingConfig](interfaces/IMessagingConfig.md)
+- [MessagingService](classes/MessagingService.md)

@@ -1,1 +1,10 @@
-{}
+{
+	"info": {
+		"messagingService": {}
+	},
+	"error": {
+		"messagingService": {
+			"getTemplateFailed": "Failed to get template"
+		}
+	}
+}
