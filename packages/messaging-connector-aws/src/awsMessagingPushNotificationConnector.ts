@@ -14,7 +14,7 @@ import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/loggi
 import type { IMessagingPushNotificationsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import { HttpStatusCode } from "@twin.org/web";
-import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
+import type { IAwsPushNotificationConnectorConfig } from "./models/IAwsPushNotificationConnectorConfig";
 
 /**
  * Class for connecting to the push notifications messaging operations of the AWS services.
@@ -40,7 +40,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	 * The configuration for the client connector.
 	 * @internal
 	 */
-	private readonly _config: IAwsConnectorConfig;
+	private readonly _config: IAwsPushNotificationConnectorConfig;
 
 	/**
 	 * The Aws SNS client.
@@ -60,9 +60,16 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
 	 * @param options.config The configuration for the AWS connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; config: IAwsConnectorConfig }) {
+	constructor(options: {
+		loggingConnectorType?: string;
+		config: IAwsPushNotificationConnectorConfig;
+	}) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IAwsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
+		Guards.object<IAwsPushNotificationConnectorConfig>(
+			this.CLASS_NAME,
+			nameof(options.config),
+			options.config
+		);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
 		Guards.stringValue(

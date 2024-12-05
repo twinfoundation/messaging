@@ -1,4 +1,4 @@
-# Interface: IAwsConnectorConfig
+# Interface: IAwsSmsConnectorConfig
 
 Configuration for the AWS Connector.
 
@@ -33,11 +33,3 @@ The access key ID for the AWS instance.
 > **secretAccessKey**: `string`
 
 The secret access key for the AWS instance.
-
-***
-
-### applicationsSettings
-
-> **applicationsSettings**: [`IAwsApplicationSettings`](IAwsApplicationSettings.md)[]
-
-The applications settings for the push notifications.

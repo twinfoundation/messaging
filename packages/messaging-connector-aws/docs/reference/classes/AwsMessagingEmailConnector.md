@@ -24,7 +24,7 @@ The options for the connector.
 
 The type of logging connector to use, defaults to no logging.
 
-• **options.config**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
+• **options.config**: [`IAwsEmailConnectorConfig`](../interfaces/IAwsEmailConnectorConfig.md)
 
 The configuration for the SES connector.
 

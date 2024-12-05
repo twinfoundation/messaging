@@ -6,7 +6,7 @@ import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/loggi
 import type { IMessagingEmailConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import { HttpStatusCode } from "@twin.org/web";
-import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
+import type { IAwsEmailConnectorConfig } from "./models/IAwsEmailConnectorConfig";
 
 /**
  * Class for connecting to the email messaging operations of the AWS services.
@@ -32,7 +32,7 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	 * The configuration for the client connector.
 	 * @internal
 	 */
-	private readonly _config: IAwsConnectorConfig;
+	private readonly _config: IAwsEmailConnectorConfig;
 
 	/**
 	 * The Aws SES client.
@@ -46,9 +46,13 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
 	 * @param options.config The configuration for the SES connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; config: IAwsConnectorConfig }) {
+	constructor(options: { loggingConnectorType?: string; config: IAwsEmailConnectorConfig }) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IAwsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
+		Guards.object<IAwsEmailConnectorConfig>(
+			this.CLASS_NAME,
+			nameof(options.config),
+			options.config
+		);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
 		Guards.stringValue(

@@ -24,7 +24,7 @@ The options for the connector.
 
 The type of logging connector to use, defaults to no logging.
 
-• **options.config**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
+• **options.config**: [`IAwsSmsConnectorConfig`](../interfaces/IAwsSmsConnectorConfig.md)
 
 The configuration for the AWS connector.
 
