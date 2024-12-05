@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { GeneralError, Guards } from "@twin.org/core";
+import { GeneralError, Guards, Is } from "@twin.org/core";
 import {
 	EntityStorageConnectorFactory,
 	type IEntityStorageConnector
@@ -53,9 +53,9 @@ export class MessagingService implements IMessagingComponent {
 	/**
 	 * Create a new instance of MessagingService.
 	 * @param options The options for the connector.
-	 * @param options.messagingEmailConnectorType The type of the email messaging connector to use, defaults to "messaging-email".
-	 * @param options.messagingPushNotificationConnectorType The type of the push notifications messaging connector to use, defaults to "messaging-push-notification".
-	 * @param options.messagingSmsConnectorType The type of the sms messaging connector to use, defaults to "messaging-sms".
+	 * @param options.messagingEmailConnectorType The type of the email messaging connector to use, defaults to not configured.
+	 * @param options.messagingPushNotificationConnectorType The type of the push notifications messaging connector to use, defaults to not configured.
+	 * @param options.messagingSmsConnectorType The type of the sms messaging connector to use, defaults to not configured.
 	 * @param options.templateEntryStorageConnectorType The type of the entity connector to use, defaults to "messaging-templates".
 	 */
 	constructor(options?: {
@@ -64,19 +64,19 @@ export class MessagingService implements IMessagingComponent {
 		messagingSmsConnectorType?: string;
 		templateEntryStorageConnectorType?: string;
 	}) {
-		if (options?.messagingEmailConnectorType) {
+		if (Is.stringValue(options?.messagingEmailConnectorType)) {
 			this._emailMessagingConnector = MessagingEmailConnectorFactory.get(
 				options.messagingEmailConnectorType
 			);
 		}
 
-		if (options?.messagingPushNotificationConnectorType) {
+		if (Is.stringValue(options?.messagingPushNotificationConnectorType)) {
 			this._pushNotificationMessagingConnector = MessagingPushNotificationsConnectorFactory.get(
 				options.messagingPushNotificationConnectorType
 			);
 		}
 
-		if (options?.messagingSmsConnectorType) {
+		if (Is.stringValue(options?.messagingSmsConnectorType)) {
 			this._smsMessagingConnector = MessagingSmsConnectorFactory.get(
 				options.messagingSmsConnectorType
 			);
@@ -103,18 +103,15 @@ export class MessagingService implements IMessagingComponent {
 		data: { [key: string]: string },
 		locale: string
 	): Promise<boolean> {
+		if (Is.empty(this._emailMessagingConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "notConfiguredEmailMessagingConnector");
+		}
+
 		Guards.stringValue(this.CLASS_NAME, nameof(sender), sender);
 		Guards.arrayValue(this.CLASS_NAME, nameof(recipients), recipients);
 		Guards.stringValue(this.CLASS_NAME, nameof(templateId), templateId);
 		Guards.object(this.CLASS_NAME, nameof(data), data);
 		Guards.stringValue(this.CLASS_NAME, nameof(locale), locale);
-
-		if (!this._emailMessagingConnector) {
-			throw new GeneralError(this.CLASS_NAME, "undefinedEmailMessagingConnector", {
-				property: "emailMessagingConnector",
-				value: "undefined"
-			});
-		}
 
 		const template = await this.getTemplate(templateId, locale);
 		const populatedTemplate = this.populateTemplate(template, data);
@@ -134,15 +131,12 @@ export class MessagingService implements IMessagingComponent {
 	 * @returns If the device was registered successfully.
 	 */
 	public async registerDevice(applicationId: string, deviceToken: string): Promise<string> {
+		if (Is.empty(this._pushNotificationMessagingConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "notConfiguredPushNotificationMessagingConnector");
+		}
+
 		Guards.stringValue(this.CLASS_NAME, nameof(applicationId), applicationId);
 		Guards.stringValue(this.CLASS_NAME, nameof(deviceToken), deviceToken);
-
-		if (!this._pushNotificationMessagingConnector) {
-			throw new GeneralError(this.CLASS_NAME, "undefinedPushNotificationMessagingConnector", {
-				property: "pushNotificationMessagingConnector",
-				value: "undefined"
-			});
-		}
 
 		return this._pushNotificationMessagingConnector.registerDevice(applicationId, deviceToken);
 	}
@@ -161,17 +155,14 @@ export class MessagingService implements IMessagingComponent {
 		data: { [key: string]: string },
 		locale: string
 	): Promise<boolean> {
+		if (Is.empty(this._pushNotificationMessagingConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "notConfiguredPushNotificationMessagingConnector");
+		}
+
 		Guards.stringValue(this.CLASS_NAME, nameof(deviceAddress), deviceAddress);
 		Guards.stringValue(this.CLASS_NAME, nameof(templateId), templateId);
 		Guards.object(this.CLASS_NAME, nameof(data), data);
 		Guards.stringValue(this.CLASS_NAME, nameof(locale), locale);
-
-		if (!this._pushNotificationMessagingConnector) {
-			throw new GeneralError(this.CLASS_NAME, "undefinedPushNotificationMessagingConnector", {
-				property: "pushNotificationMessagingConnector",
-				value: "undefined"
-			});
-		}
 
 		const template = await this.getTemplate(templateId, locale);
 		const populatedTemplate = this.populateTemplate(template, data);
@@ -197,17 +188,14 @@ export class MessagingService implements IMessagingComponent {
 		data: { [key: string]: string },
 		locale: string
 	): Promise<boolean> {
+		if (Is.empty(this._smsMessagingConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "notConfiguredSmsMessagingConnector");
+		}
+
 		Guards.stringValue(this.CLASS_NAME, nameof(phoneNumber), phoneNumber);
 		Guards.stringValue(this.CLASS_NAME, nameof(templateId), templateId);
 		Guards.object(this.CLASS_NAME, nameof(data), data);
 		Guards.stringValue(this.CLASS_NAME, nameof(locale), locale);
-
-		if (!this._smsMessagingConnector) {
-			throw new GeneralError(this.CLASS_NAME, "undefinedSmsMessagingConnector", {
-				property: "smsMessagingConnector",
-				value: "undefined"
-			});
-		}
 
 		const template = await this.getTemplate(templateId, locale);
 		const populatedTemplate = this.populateTemplate(template, data);
@@ -248,8 +236,8 @@ export class MessagingService implements IMessagingComponent {
 	 * Get the email template by id and locale.
 	 * @param templateId The id of the email template.
 	 * @param locale The locale of the email template.
-	 * @internal
 	 * @returns The email template.
+	 * @internal
 	 */
 	private async getTemplate(
 		templateId: string,

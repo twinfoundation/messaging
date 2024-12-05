@@ -162,10 +162,7 @@ describe("MessagingService", () => {
 			)
 		).rejects.toMatchObject({
 			name: "GeneralError",
-			properties: {
-				property: "emailMessagingConnector",
-				value: "undefined"
-			}
+			message: "messagingService.notConfiguredEmailMessagingConnector"
 		});
 	});
 
@@ -233,10 +230,7 @@ describe("MessagingService", () => {
 		const service = new MessagingService();
 		await expect(service.registerDevice("applicationId", "deviceToken")).rejects.toMatchObject({
 			name: "GeneralError",
-			properties: {
-				property: "pushNotificationMessagingConnector",
-				value: "undefined"
-			}
+			message: "messagingService.notConfiguredPushNotificationMessagingConnector"
 		});
 	});
 
@@ -341,10 +335,7 @@ describe("MessagingService", () => {
 			service.sendSinglePushNotification("deviceAddress", "templateId", { name: "name" }, "en")
 		).rejects.toMatchObject({
 			name: "GeneralError",
-			properties: {
-				property: "pushNotificationMessagingConnector",
-				value: "undefined"
-			}
+			message: "messagingService.notConfiguredPushNotificationMessagingConnector"
 		});
 	});
 
@@ -448,10 +439,7 @@ describe("MessagingService", () => {
 			service.sendSMS("1234567890", "templateId", { name: "name" }, "en")
 		).rejects.toMatchObject({
 			name: "GeneralError",
-			properties: {
-				property: "smsMessagingConnector",
-				value: "undefined"
-			}
+			message: "messagingService.notConfiguredSmsMessagingConnector"
 		});
 	});
 

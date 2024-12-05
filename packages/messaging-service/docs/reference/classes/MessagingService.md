@@ -22,15 +22,15 @@ The options for the connector.
 
 • **options.messagingEmailConnectorType?**: `string`
 
-The type of the email messaging connector to use, defaults to "messaging-email".
+The type of the email messaging connector to use, defaults to not configured.
 
 • **options.messagingPushNotificationConnectorType?**: `string`
 
-The type of the push notifications messaging connector to use, defaults to "messaging-push-notification".
+The type of the push notifications messaging connector to use, defaults to not configured.
 
 • **options.messagingSmsConnectorType?**: `string`
 
-The type of the sms messaging connector to use, defaults to "messaging-sms".
+The type of the sms messaging connector to use, defaults to not configured.
 
 • **options.templateEntryStorageConnectorType?**: `string`
 
