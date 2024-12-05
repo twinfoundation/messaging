@@ -33,7 +33,7 @@ describe("MessagingService", () => {
 			() => ({}) as unknown as IMessagingSmsConnector
 		);
 		EntityStorageConnectorFactory.register(
-			"messaging-templates",
+			"template-entry",
 			() => ({}) as unknown as IEntityStorageConnector
 		);
 		const service = new MessagingService();
@@ -46,7 +46,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending email with invalid sender", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingEmailConnectorType: "messaging-email"
+		});
 		await expect(
 			service.sendCustomEmail(
 				undefined as unknown as string,
@@ -65,7 +67,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending email with invalid recipients", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingEmailConnectorType: "messaging-email"
+		});
 		await expect(
 			service.sendCustomEmail(
 				"sender@example.com",
@@ -84,7 +88,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending email with invalid templateId", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingEmailConnectorType: "messaging-email"
+		});
 		await expect(
 			service.sendCustomEmail(
 				"sender@example.com",
@@ -103,7 +109,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending email with invalid data", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingEmailConnectorType: "messaging-email"
+		});
 		await expect(
 			service.sendCustomEmail(
 				"sender@example.com",
@@ -122,7 +130,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending email with invalid locale", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingEmailConnectorType: "messaging-email"
+		});
 		await expect(
 			service.sendCustomEmail(
 				"sender@example.com",
@@ -135,6 +145,25 @@ describe("MessagingService", () => {
 			name: "GuardError",
 			properties: {
 				property: "locale",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("throws error when sending an email without defining the Email connector", async () => {
+		const service = new MessagingService();
+		await expect(
+			service.sendCustomEmail(
+				"sender@example.com",
+				["recipient@example.com"],
+				"templateId",
+				{ name: "name" },
+				"en"
+			)
+		).rejects.toMatchObject({
+			name: "GeneralError",
+			properties: {
+				property: "emailMessagingConnector",
 				value: "undefined"
 			}
 		});
@@ -156,8 +185,10 @@ describe("MessagingService", () => {
 			})
 		} as unknown as IEntityStorageConnector;
 
-		EntityStorageConnectorFactory.register("messaging-templates", () => mockStorage);
-		const service = new MessagingService();
+		EntityStorageConnectorFactory.register("template-entry", () => mockStorage);
+		const service = new MessagingService({
+			messagingEmailConnectorType: "messaging-email"
+		});
 		const result = await service.sendCustomEmail(
 			"sender@example.com",
 			["recipient@example.com"],
@@ -169,7 +200,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when registering device with invalid applicationId", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingPushNotificationConnectorType: "messaging-push-notification"
+		});
 		await expect(
 			service.registerDevice(undefined as unknown as string, "deviceToken")
 		).rejects.toMatchObject({
@@ -182,13 +215,26 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when registering device with invalid deviceToken", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingPushNotificationConnectorType: "messaging-push-notification"
+		});
 		await expect(
 			service.registerDevice("applicationId", undefined as unknown as string)
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
 				property: "deviceToken",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("throws error when registering a device without defining the Push Notification connector", async () => {
+		const service = new MessagingService();
+		await expect(service.registerDevice("applicationId", "deviceToken")).rejects.toMatchObject({
+			name: "GeneralError",
+			properties: {
+				property: "pushNotificationMessagingConnector",
 				value: "undefined"
 			}
 		});
@@ -202,13 +248,17 @@ describe("MessagingService", () => {
 					registerDevice: async () => "deviceRegistered"
 				}) as unknown as IMessagingPushNotificationsConnector
 		);
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingPushNotificationConnectorType: "messaging-push-notification"
+		});
 		const result = await service.registerDevice("applicationId", "deviceToken");
 		expect(result).toBe("deviceRegistered");
 	});
 
 	test("throws error when sending push notification with invalid deviceAddress", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingPushNotificationConnectorType: "messaging-push-notification"
+		});
 		await expect(
 			service.sendSinglePushNotification(
 				undefined as unknown as string,
@@ -226,7 +276,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending push notification with invalid templateId", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingPushNotificationConnectorType: "messaging-push-notification"
+		});
 		await expect(
 			service.sendSinglePushNotification(
 				"deviceAddress",
@@ -244,7 +296,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending push notification with invalid data", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingPushNotificationConnectorType: "messaging-push-notification"
+		});
 		await expect(
 			service.sendSinglePushNotification(
 				"deviceAddress",
@@ -262,7 +316,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending push notification with invalid locale", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingPushNotificationConnectorType: "messaging-push-notification"
+		});
 		await expect(
 			service.sendSinglePushNotification(
 				"deviceAddress",
@@ -274,6 +330,19 @@ describe("MessagingService", () => {
 			name: "GuardError",
 			properties: {
 				property: "locale",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("throws error when sending a push notification without defining the Push Notification connector", async () => {
+		const service = new MessagingService();
+		await expect(
+			service.sendSinglePushNotification("deviceAddress", "templateId", { name: "name" }, "en")
+		).rejects.toMatchObject({
+			name: "GeneralError",
+			properties: {
+				property: "pushNotificationMessagingConnector",
 				value: "undefined"
 			}
 		});
@@ -295,8 +364,10 @@ describe("MessagingService", () => {
 			})
 		} as unknown as IEntityStorageConnector;
 
-		EntityStorageConnectorFactory.register("messaging-templates", () => mockStorage);
-		const service = new MessagingService();
+		EntityStorageConnectorFactory.register("template-entry", () => mockStorage);
+		const service = new MessagingService({
+			messagingPushNotificationConnectorType: "messaging-push-notification"
+		});
 		const result = await service.sendSinglePushNotification(
 			"deviceAddress",
 			"templateId",
@@ -307,7 +378,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending SMS with invalid phoneNumber", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingSmsConnectorType: "messaging-sms"
+		});
 		await expect(
 			service.sendSMS(undefined as unknown as string, "templateId", { name: "name" }, "en")
 		).rejects.toMatchObject({
@@ -320,7 +393,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending SMS with invalid templateId", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingSmsConnectorType: "messaging-sms"
+		});
 		await expect(
 			service.sendSMS("1234567890", undefined as unknown as string, { name: "name" }, "en")
 		).rejects.toMatchObject({
@@ -333,7 +408,9 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending SMS with invalid data", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingSmsConnectorType: "messaging-sms"
+		});
 		await expect(
 			service.sendSMS(
 				"1234567890",
@@ -351,13 +428,28 @@ describe("MessagingService", () => {
 	});
 
 	test("throws error when sending SMS with invalid locale", async () => {
-		const service = new MessagingService();
+		const service = new MessagingService({
+			messagingSmsConnectorType: "messaging-sms"
+		});
 		await expect(
 			service.sendSMS("1234567890", "templateId", { name: "name" }, undefined as unknown as string)
 		).rejects.toMatchObject({
 			name: "GuardError",
 			properties: {
 				property: "locale",
+				value: "undefined"
+			}
+		});
+	});
+
+	test("throws error when sending SMS without defining the SMS connector", async () => {
+		const service = new MessagingService();
+		await expect(
+			service.sendSMS("1234567890", "templateId", { name: "name" }, "en")
+		).rejects.toMatchObject({
+			name: "GeneralError",
+			properties: {
+				property: "smsMessagingConnector",
 				value: "undefined"
 			}
 		});
@@ -379,8 +471,10 @@ describe("MessagingService", () => {
 			})
 		} as unknown as IEntityStorageConnector;
 
-		EntityStorageConnectorFactory.register("messaging-templates", () => mockStorage);
-		const service = new MessagingService();
+		EntityStorageConnectorFactory.register("template-entry", () => mockStorage);
+		const service = new MessagingService({
+			messagingSmsConnectorType: "messaging-sms"
+		});
 		const result = await service.sendSMS("1234567890", "templateId", { name: "name" }, "en");
 		expect(result).toBe(true);
 	});
@@ -462,7 +556,7 @@ describe("MessagingService", () => {
 			EntitySchemaHelper.getSchema(TemplateEntry)
 		);
 		EntityStorageConnectorFactory.register(
-			"messaging-templates",
+			"template-entry",
 			() =>
 				new MemoryEntityStorageConnector<TemplateEntry>({
 					entitySchema: nameof<TemplateEntry>()
