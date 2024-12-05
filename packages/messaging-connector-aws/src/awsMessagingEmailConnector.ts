@@ -13,6 +13,11 @@ import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
  */
 export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	/**
+	 * The namespace for the connector.
+	 */
+	public static readonly NAMESPACE: string = "aws";
+
+	/**
 	 * Runtime name for the class.
 	 */
 	public readonly CLASS_NAME: string = nameof<AwsMessagingEmailConnector>();

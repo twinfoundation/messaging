@@ -34,6 +34,14 @@ The configuration for the SES connector.
 
 ## Properties
 
+### NAMESPACE
+
+> `readonly` `static` **NAMESPACE**: `string` = `"aws"`
+
+The namespace for the connector.
+
+***
+
 ### CLASS\_NAME
 
 > `readonly` **CLASS\_NAME**: `string`

@@ -21,6 +21,11 @@ import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
  */
 export class AwsMessagingPushNotificationConnector implements IMessagingPushNotificationsConnector {
 	/**
+	 * The namespace for the connector.
+	 */
+	public static readonly NAMESPACE: string = "aws";
+
+	/**
 	 * Runtime name for the class.
 	 */
 	public readonly CLASS_NAME: string = nameof<AwsMessagingPushNotificationConnector>();

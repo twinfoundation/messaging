@@ -34,6 +34,14 @@ The type of entity storage connector to use for the email entries, defaults to "
 
 ## Properties
 
+### NAMESPACE
+
+> `readonly` `static` **NAMESPACE**: `string` = `"entity-storage"`
+
+The namespace for the connector.
+
+***
+
 ### CLASS\_NAME
 
 > `readonly` **CLASS\_NAME**: `string`

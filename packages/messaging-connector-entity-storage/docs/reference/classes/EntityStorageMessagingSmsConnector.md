@@ -34,6 +34,14 @@ The type of entity storage connector to use for the sms entries, defaults to "sm
 
 ## Properties
 
+### NAMESPACE
+
+> `readonly` `static` **NAMESPACE**: `string` = `"entity-storage"`
+
+The namespace for the connector.
+
+***
+
 ### CLASS\_NAME
 
 > `readonly` **CLASS\_NAME**: `string`

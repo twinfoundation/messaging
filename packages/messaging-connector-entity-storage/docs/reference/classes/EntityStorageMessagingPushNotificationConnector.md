@@ -38,6 +38,14 @@ The type of entity storage connector to use for the push notifications entries, 
 
 ## Properties
 
+### NAMESPACE
+
+> `readonly` `static` **NAMESPACE**: `string` = `"entity-storage"`
+
+The namespace for the connector.
+
+***
+
 ### CLASS\_NAME
 
 > `readonly` **CLASS\_NAME**: `string`

@@ -15,6 +15,11 @@ import type { EmailEntry } from "./entities/emailEntry";
  */
 export class EntityStorageMessagingEmailConnector implements IMessagingEmailConnector {
 	/**
+	 * The namespace for the connector.
+	 */
+	public static readonly NAMESPACE: string = "entity-storage";
+
+	/**
 	 * Runtime name for the class.
 	 */
 	public readonly CLASS_NAME: string = nameof<EntityStorageMessagingEmailConnector>();

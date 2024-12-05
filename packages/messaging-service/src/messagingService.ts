@@ -22,6 +22,11 @@ import { TemplateEntry } from "./entities/templateEntry";
  */
 export class MessagingService implements IMessagingComponent {
 	/**
+	 * The namespace for the service.
+	 */
+	public static readonly NAMESPACE: string = "messaging";
+
+	/**
 	 * Runtime name for the class.
 	 */
 	public readonly CLASS_NAME: string = nameof<MessagingService>();

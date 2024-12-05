@@ -15,6 +15,11 @@ import type { SmsEntry } from "./entities/smsEntry";
  */
 export class EntityStorageMessagingSmsConnector implements IMessagingSmsConnector {
 	/**
+	 * The namespace for the connector.
+	 */
+	public static readonly NAMESPACE: string = "entity-storage";
+
+	/**
 	 * Runtime name for the class.
 	 */
 	public readonly CLASS_NAME: string = nameof<EntityStorageMessagingSmsConnector>();

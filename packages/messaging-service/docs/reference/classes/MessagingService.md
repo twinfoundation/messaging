@@ -42,6 +42,14 @@ The type of the entity connector to use, defaults to "messaging-templates".
 
 ## Properties
 
+### NAMESPACE
+
+> `readonly` `static` **NAMESPACE**: `string` = `"messaging"`
+
+The namespace for the service.
+
+***
+
 ### CLASS\_NAME
 
 > `readonly` **CLASS\_NAME**: `string`
