@@ -2,6 +2,7 @@
 
 ## Classes
 
+- [TemplateEntry](classes/TemplateEntry.md)
 - [MessagingService](classes/MessagingService.md)
 
 ## Functions
