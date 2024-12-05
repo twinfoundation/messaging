@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { Converter, GeneralError, Guards, Is, RandomHelper } from "@twin.org/core";
+import { Converter, GeneralError, Guards, Is, RandomHelper, StringHelper } from "@twin.org/core";
 import {
 	EntityStorageConnectorFactory,
 	type IEntityStorageConnector
@@ -9,7 +9,6 @@ import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/loggi
 import type { IMessagingSmsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import type { SmsEntry } from "./entities/smsEntry";
-import type { IEntityStorageMessagingSmsConnectorConfig } from "./models/IEntityStorageMessagingSmsConnectorConfig";
 
 /**
  * Class for connecting to the SMS messaging operations of the Entity Storage.
@@ -30,25 +29,23 @@ export class EntityStorageMessagingSmsConnector implements IMessagingSmsConnecto
 	 * The entity storage for the sms entries.
 	 * @internal
 	 */
-	private readonly _messagingEntryStorage: IEntityStorageConnector<SmsEntry>;
+	private readonly _messagingSmsEntryStorage: IEntityStorageConnector<SmsEntry>;
 
 	/**
 	 * Create a new instance of EntityStorageMessagingSmsConnector.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.messagingEntryStorageConnectorType The type of entity storage connector to use for the sms entries.
-	 * @param options.config The configuration for the sms connector.
+	 * @param options.messagingSmsEntryStorageConnectorType The type of entity storage connector to use for the sms entries, defaults to "sms-entry".
 	 */
 	constructor(options?: {
 		loggingConnectorType?: string;
-		messagingEntryStorageConnectorType: string;
-		config?: IEntityStorageMessagingSmsConnectorConfig;
+		messagingSmsEntryStorageConnectorType?: string;
 	}) {
 		if (Is.stringValue(options?.loggingConnectorType)) {
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}
-		this._messagingEntryStorage = EntityStorageConnectorFactory.get(
-			options?.messagingEntryStorageConnectorType ?? "sms-entry"
+		this._messagingSmsEntryStorage = EntityStorageConnectorFactory.get(
+			options?.messagingSmsEntryStorageConnectorType ?? StringHelper.kebabCase(nameof<SmsEntry>())
 		);
 	}
 
@@ -79,7 +76,7 @@ export class EntityStorageMessagingSmsConnector implements IMessagingSmsConnecto
 				status: "sent"
 			};
 
-			await this._messagingEntryStorage.set(entity);
+			await this._messagingSmsEntryStorage.set(entity);
 
 			return true;
 		} catch (err) {

@@ -6,8 +6,6 @@
 - [EntityStorageMessagingPushNotificationConnector](classes/EntityStorageMessagingPushNotificationConnector.md)
 - [EntityStorageMessagingSmsConnector](classes/EntityStorageMessagingSmsConnector.md)
 
-## Type Aliases
+## Functions
 
-- [IEntityStorageMessagingEmailConnectorConfig](type-aliases/IEntityStorageMessagingEmailConnectorConfig.md)
-- [IEntityStorageMessagingPushNotificationsConnectorConfig](type-aliases/IEntityStorageMessagingPushNotificationsConnectorConfig.md)
-- [IEntityStorageMessagingSmsConnectorConfig](type-aliases/IEntityStorageMessagingSmsConnectorConfig.md)
+- [initSchema](functions/initSchema.md)

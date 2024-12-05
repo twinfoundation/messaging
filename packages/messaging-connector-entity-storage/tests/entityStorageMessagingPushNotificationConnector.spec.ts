@@ -12,14 +12,14 @@ describe("EntityStorageMessagingPushNotificationConnector", () => {
 	beforeAll(() => {
 		initSchema();
 		EntityStorageConnectorFactory.register(
-			"push-notifications-device-entry",
+			"push-notification-device-entry",
 			() =>
 				new MemoryEntityStorageConnector<PushNotificationDeviceEntry>({
 					entitySchema: nameof<PushNotificationDeviceEntry>()
 				})
 		);
 		EntityStorageConnectorFactory.register(
-			"push-notifications-message-entry",
+			"push-notification-message-entry",
 			() =>
 				new MemoryEntityStorageConnector<PushNotificationMessageEntry>({
 					entitySchema: nameof<PushNotificationMessageEntry>()
@@ -34,7 +34,8 @@ describe("EntityStorageMessagingPushNotificationConnector", () => {
 
 	test("register device with invalid applicationId throws error", async () => {
 		const storage = new EntityStorageMessagingPushNotificationConnector({
-			messagingEntryStorageConnectorType: "push-notifications-device-entry"
+			messagingDeviceEntryStorageConnectorType: "push-notification-device-entry",
+			messagingMessageEntryStorageConnectorType: "push-notification-message-entry"
 		});
 		const deviceToken = "token123";
 		await expect(
@@ -50,7 +51,8 @@ describe("EntityStorageMessagingPushNotificationConnector", () => {
 
 	test("register device with invalid deviceToken throws error", async () => {
 		const storage = new EntityStorageMessagingPushNotificationConnector({
-			messagingEntryStorageConnectorType: "push-notifications-device-entry"
+			messagingDeviceEntryStorageConnectorType: "push-notification-device-entry",
+			messagingMessageEntryStorageConnectorType: "push-notification-message-entry"
 		});
 		const applicationId = "app123";
 		await expect(
@@ -66,7 +68,8 @@ describe("EntityStorageMessagingPushNotificationConnector", () => {
 
 	test("can register device", async () => {
 		const storage = new EntityStorageMessagingPushNotificationConnector({
-			messagingEntryStorageConnectorType: "push-notifications-device-entry"
+			messagingDeviceEntryStorageConnectorType: "push-notification-device-entry",
+			messagingMessageEntryStorageConnectorType: "push-notification-message-entry"
 		});
 		const applicationId = "app123";
 		const deviceToken = "token123";
@@ -74,7 +77,7 @@ describe("EntityStorageMessagingPushNotificationConnector", () => {
 		expect(id).toBeDefined();
 		expect(id.length).toBeGreaterThan(0);
 		const entries = await EntityStorageConnectorFactory.get(
-			"push-notifications-device-entry"
+			"push-notification-device-entry"
 		).query();
 		expect(entries.entities).toBeDefined();
 		expect(entries.entities.length).toBe(1);
@@ -84,7 +87,8 @@ describe("EntityStorageMessagingPushNotificationConnector", () => {
 
 	test("send single push notification with invalid deviceAddress throws error", async () => {
 		const storage = new EntityStorageMessagingPushNotificationConnector({
-			messagingEntryStorageConnectorType: "push-notifications-message-entry"
+			messagingDeviceEntryStorageConnectorType: "push-notification-device-entry",
+			messagingMessageEntryStorageConnectorType: "push-notification-message-entry"
 		});
 		const title = "Test Title";
 		const message = "Test Message";
@@ -101,7 +105,8 @@ describe("EntityStorageMessagingPushNotificationConnector", () => {
 
 	test("send single push notification with invalid title throws error", async () => {
 		const storage = new EntityStorageMessagingPushNotificationConnector({
-			messagingEntryStorageConnectorType: "push-notifications-message-entry"
+			messagingDeviceEntryStorageConnectorType: "push-notification-device-entry",
+			messagingMessageEntryStorageConnectorType: "push-notification-message-entry"
 		});
 		const deviceAddress = "device123";
 		const message = "Test Message";
@@ -118,7 +123,8 @@ describe("EntityStorageMessagingPushNotificationConnector", () => {
 
 	test("send single push notification with invalid message throws error", async () => {
 		const storage = new EntityStorageMessagingPushNotificationConnector({
-			messagingEntryStorageConnectorType: "push-notifications-message-entry"
+			messagingDeviceEntryStorageConnectorType: "push-notification-device-entry",
+			messagingMessageEntryStorageConnectorType: "push-notification-message-entry"
 		});
 		const deviceAddress = "device123";
 		const title = "Test Title";
@@ -134,21 +140,19 @@ describe("EntityStorageMessagingPushNotificationConnector", () => {
 	});
 
 	test("can send single push notification", async () => {
-		const storageDevice = new EntityStorageMessagingPushNotificationConnector({
-			messagingEntryStorageConnectorType: "push-notifications-device-entry"
-		});
-		const storageMessage = new EntityStorageMessagingPushNotificationConnector({
-			messagingEntryStorageConnectorType: "push-notifications-message-entry"
+		const storage = new EntityStorageMessagingPushNotificationConnector({
+			messagingDeviceEntryStorageConnectorType: "push-notification-device-entry",
+			messagingMessageEntryStorageConnectorType: "push-notification-message-entry"
 		});
 		const applicationId = "app123";
 		const deviceToken = "token123";
 		const title = "Test Title";
 		const message = "Test Message";
-		const deviceAddress = await storageDevice.registerDevice(applicationId, deviceToken);
-		const result = await storageMessage.sendSinglePushNotification(deviceAddress, title, message);
+		const deviceAddress = await storage.registerDevice(applicationId, deviceToken);
+		const result = await storage.sendSinglePushNotification(deviceAddress, title, message);
 		expect(result).toBe(true);
 		const entries = await EntityStorageConnectorFactory.get(
-			"push-notifications-message-entry"
+			"push-notification-message-entry"
 		).query();
 		expect(entries.entities).toBeDefined();
 		expect(entries.entities.length).toBe(1);

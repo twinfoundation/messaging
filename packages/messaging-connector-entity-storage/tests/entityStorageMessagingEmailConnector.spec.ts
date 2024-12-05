@@ -26,7 +26,7 @@ describe("EntityStorageMessagingEmailConnector", () => {
 
 	test("throws error when sending email with invalid sender", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "email-entry"
+			messagingEmailEntryStorageConnectorType: "email-entry"
 		});
 		await expect(
 			storage.sendCustomEmail(
@@ -46,7 +46,7 @@ describe("EntityStorageMessagingEmailConnector", () => {
 
 	test("throws error when sending email with invalid recipients", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "email-entry"
+			messagingEmailEntryStorageConnectorType: "email-entry"
 		});
 		await expect(
 			storage.sendCustomEmail(
@@ -66,7 +66,7 @@ describe("EntityStorageMessagingEmailConnector", () => {
 
 	test("throws error when sending email with invalid subject", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "email-entry"
+			messagingEmailEntryStorageConnectorType: "email-entry"
 		});
 		await expect(
 			storage.sendCustomEmail(
@@ -86,7 +86,7 @@ describe("EntityStorageMessagingEmailConnector", () => {
 
 	test("throws error when sending email with invalid content", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "email-entry"
+			messagingEmailEntryStorageConnectorType: "email-entry"
 		});
 		await expect(
 			storage.sendCustomEmail(
@@ -106,7 +106,7 @@ describe("EntityStorageMessagingEmailConnector", () => {
 
 	test("can send custom email", async () => {
 		const storage = new EntityStorageMessagingEmailConnector({
-			messagingEntryStorageConnectorType: "email-entry"
+			messagingEmailEntryStorageConnectorType: "email-entry"
 		});
 		const result = await storage.sendCustomEmail(
 			"sender@example.com",

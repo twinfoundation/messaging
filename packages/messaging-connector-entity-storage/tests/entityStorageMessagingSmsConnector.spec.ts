@@ -26,7 +26,7 @@ describe("EntityStorageMessagingSmsConnector", () => {
 
 	test("fails to send sms with invalid phone number", async () => {
 		const storage = new EntityStorageMessagingSmsConnector({
-			messagingEntryStorageConnectorType: "sms-entry"
+			messagingSmsEntryStorageConnectorType: "sms-entry"
 		});
 		await expect(
 			storage.sendSMS(undefined as unknown as string, "Test Content")
@@ -41,7 +41,7 @@ describe("EntityStorageMessagingSmsConnector", () => {
 
 	test("fails to send sms with empty message", async () => {
 		const storage = new EntityStorageMessagingSmsConnector({
-			messagingEntryStorageConnectorType: "sms-entry"
+			messagingSmsEntryStorageConnectorType: "sms-entry"
 		});
 		await expect(
 			storage.sendSMS("+1234567890", undefined as unknown as string)
@@ -56,7 +56,7 @@ describe("EntityStorageMessagingSmsConnector", () => {
 
 	test("can send custom sms", async () => {
 		const storage = new EntityStorageMessagingSmsConnector({
-			messagingEntryStorageConnectorType: "sms-entry"
+			messagingSmsEntryStorageConnectorType: "sms-entry"
 		});
 		const result = await storage.sendSMS("+1234567890", "Test Content");
 		expect(result).toBe(true);

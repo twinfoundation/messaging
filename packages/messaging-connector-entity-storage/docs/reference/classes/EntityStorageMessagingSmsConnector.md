@@ -24,13 +24,9 @@ The options for the connector.
 
 The type of logging connector to use, defaults to no logging.
 
-• **options.messagingEntryStorageConnectorType?**: `string`
+• **options.messagingSmsEntryStorageConnectorType?**: `string`
 
-The type of entity storage connector to use for the sms entries.
-
-• **options.config?**: `IMessagingSmsConnector`
-
-The configuration for the sms connector.
+The type of entity storage connector to use for the sms entries, defaults to "sms-entry".
 
 #### Returns
 

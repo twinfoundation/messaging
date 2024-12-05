@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { Converter, GeneralError, Guards, Is, RandomHelper } from "@twin.org/core";
+import { Converter, GeneralError, Guards, Is, RandomHelper, StringHelper } from "@twin.org/core";
 import {
 	EntityStorageConnectorFactory,
 	type IEntityStorageConnector
@@ -9,7 +9,6 @@ import { LoggingConnectorFactory, type ILoggingConnector } from "@twin.org/loggi
 import type { IMessagingEmailConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import type { EmailEntry } from "./entities/emailEntry";
-import type { IEntityStorageMessagingEmailConnectorConfig } from "./models/IEntityStorageMessagingEmailConnectorConfig";
 
 /**
  * Class for connecting to the email messaging operations of the Entity Storage.
@@ -30,25 +29,24 @@ export class EntityStorageMessagingEmailConnector implements IMessagingEmailConn
 	 * The entity storage for the emails entries.
 	 * @internal
 	 */
-	private readonly _messagingEntryStorage: IEntityStorageConnector<EmailEntry>;
+	private readonly _messagingEmailEntryStorage: IEntityStorageConnector<EmailEntry>;
 
 	/**
 	 * Create a new instance of EntityStorageMessagingEmailConnector.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.messagingEntryStorageConnectorType The type of entity storage connector to use for the email entries.
-	 * @param options.config The configuration for the email connector.
+	 * @param options.messagingEmailEntryStorageConnectorType The type of entity storage connector to use for the email entries, defaults to "email-entry".
 	 */
 	constructor(options?: {
 		loggingConnectorType?: string;
-		messagingEntryStorageConnectorType: string;
-		config?: IEntityStorageMessagingEmailConnectorConfig;
+		messagingEmailEntryStorageConnectorType?: string;
 	}) {
 		if (Is.stringValue(options?.loggingConnectorType)) {
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}
-		this._messagingEntryStorage = EntityStorageConnectorFactory.get(
-			options?.messagingEntryStorageConnectorType ?? "email-entry"
+		this._messagingEmailEntryStorage = EntityStorageConnectorFactory.get(
+			options?.messagingEmailEntryStorageConnectorType ??
+				StringHelper.kebabCase(nameof<EmailEntry>())
 		);
 	}
 
@@ -93,7 +91,7 @@ export class EntityStorageMessagingEmailConnector implements IMessagingEmailConn
 				status: "pending"
 			};
 
-			await this._messagingEntryStorage.set(entity);
+			await this._messagingEmailEntryStorage.set(entity);
 
 			return true;
 		} catch (err) {

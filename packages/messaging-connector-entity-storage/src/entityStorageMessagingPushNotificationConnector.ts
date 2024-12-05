@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { Converter, GeneralError, Guards, Is, RandomHelper } from "@twin.org/core";
+import { Converter, GeneralError, Guards, Is, RandomHelper, StringHelper } from "@twin.org/core";
 import {
 	EntityStorageConnectorFactory,
 	type IEntityStorageConnector
@@ -10,7 +10,6 @@ import type { IMessagingPushNotificationsConnector } from "@twin.org/messaging-m
 import { nameof } from "@twin.org/nameof";
 import type { PushNotificationDeviceEntry } from "./entities/pushNotificationDeviceEntry";
 import type { PushNotificationMessageEntry } from "./entities/pushNotificationMessageEntry";
-import type { IEntityStorageMessagingPushNotificationsConnectorConfig } from "./models/IEntityStorageMessagingPushNotificationsConnectorConfig";
 
 /**
  * Class for connecting to the push notifications messaging operations of the Entity Storage.
@@ -45,22 +44,24 @@ export class EntityStorageMessagingPushNotificationConnector
 	 * Create a new instance of EntityStorageMessagingPushNotificationConnector.
 	 * @param options The options for the connector.
 	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.messagingEntryStorageConnectorType The type of entity storage connector to use for the push notifications entries.
-	 * @param options.config The configuration for the push notifications connector.
+	 * @param options.messagingDeviceEntryStorageConnectorType The type of entity storage connector to use for the push notifications entries, defaults to "push-notification-device-entry".
+	 * @param options.messagingMessageEntryStorageConnectorType The type of entity storage connector to use for the push notifications entries, defaults to "push-notification-message-entry".
 	 */
 	constructor(options?: {
 		loggingConnectorType?: string;
-		messagingEntryStorageConnectorType: string;
-		config?: IEntityStorageMessagingPushNotificationsConnectorConfig;
+		messagingDeviceEntryStorageConnectorType?: string;
+		messagingMessageEntryStorageConnectorType?: string;
 	}) {
 		if (Is.stringValue(options?.loggingConnectorType)) {
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}
 		this._messagingDeviceEntryStorage = EntityStorageConnectorFactory.get(
-			options?.messagingEntryStorageConnectorType ?? "push-notifications-device-entry"
+			options?.messagingDeviceEntryStorageConnectorType ??
+				StringHelper.kebabCase(nameof<PushNotificationDeviceEntry>())
 		);
 		this._messagingMessageEntryStorage = EntityStorageConnectorFactory.get(
-			options?.messagingEntryStorageConnectorType ?? "push-notifications-message-entry"
+			options?.messagingMessageEntryStorageConnectorType ??
+				StringHelper.kebabCase(nameof<PushNotificationMessageEntry>())
 		);
 	}
 

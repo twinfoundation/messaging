@@ -24,13 +24,13 @@ The options for the connector.
 
 The type of logging connector to use, defaults to no logging.
 
-• **options.messagingEntryStorageConnectorType?**: `string`
+• **options.messagingDeviceEntryStorageConnectorType?**: `string`
 
-The type of entity storage connector to use for the push notifications entries.
+The type of entity storage connector to use for the push notifications entries, defaults to "push-notification-device-entry".
 
-• **options.config?**: `IMessagingPushNotificationsConnector`
+• **options.messagingMessageEntryStorageConnectorType?**: `string`
 
-The configuration for the push notifications connector.
+The type of entity storage connector to use for the push notifications entries, defaults to "push-notification-message-entry".
 
 #### Returns
 

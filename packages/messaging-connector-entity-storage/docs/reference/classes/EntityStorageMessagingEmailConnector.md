@@ -24,13 +24,9 @@ The options for the connector.
 
 The type of logging connector to use, defaults to no logging.
 
-• **options.messagingEntryStorageConnectorType?**: `string`
+• **options.messagingEmailEntryStorageConnectorType?**: `string`
 
-The type of entity storage connector to use for the email entries.
-
-• **options.config?**: `IMessagingEmailConnector`
-
-The configuration for the email connector.
+The type of entity storage connector to use for the email entries, defaults to "email-entry".
 
 #### Returns
 
