@@ -9,18 +9,32 @@ import { SmsEntry } from "./entities/smsEntry";
 
 /**
  * Initialize the schema for the messaging connector entity storage.
+ * @param options The options for the initialisation.
+ * @param options.email Should we register email schemas.
+ * @param options.sms Should we register sms schemas.
+ * @param options.pushNotification Should we register push notification schemas.
  */
-export function initSchema(): void {
-	EntitySchemaFactory.register(nameof<EmailEntry>(), () =>
-		EntitySchemaHelper.getSchema(EmailEntry)
-	);
+export function initSchema(options?: {
+	email?: boolean;
+	sms?: boolean;
+	pushNotification?: boolean;
+}): void {
+	if (options?.email ?? true) {
+		EntitySchemaFactory.register(nameof<EmailEntry>(), () =>
+			EntitySchemaHelper.getSchema(EmailEntry)
+		);
+	}
 
-	EntitySchemaFactory.register(nameof<PushNotificationDeviceEntry>(), () =>
-		EntitySchemaHelper.getSchema(PushNotificationDeviceEntry)
-	);
-	EntitySchemaFactory.register(nameof<PushNotificationMessageEntry>(), () =>
-		EntitySchemaHelper.getSchema(PushNotificationMessageEntry)
-	);
+	if (options?.pushNotification ?? true) {
+		EntitySchemaFactory.register(nameof<PushNotificationDeviceEntry>(), () =>
+			EntitySchemaHelper.getSchema(PushNotificationDeviceEntry)
+		);
+		EntitySchemaFactory.register(nameof<PushNotificationMessageEntry>(), () =>
+			EntitySchemaHelper.getSchema(PushNotificationMessageEntry)
+		);
+	}
 
-	EntitySchemaFactory.register(nameof<SmsEntry>(), () => EntitySchemaHelper.getSchema(SmsEntry));
+	if (options?.sms ?? true) {
+		EntitySchemaFactory.register(nameof<SmsEntry>(), () => EntitySchemaHelper.getSchema(SmsEntry));
+	}
 }
