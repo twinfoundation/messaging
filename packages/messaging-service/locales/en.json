@@ -1,0 +1,13 @@
+{
+	"info": {
+		"messagingService": {}
+	},
+	"error": {
+		"messagingService": {
+			"getTemplateFailed": "Failed to get template with id: {{templateId}} and locale: {{locale}}",
+			"undefinedEmailMessagingConnector": "Email messaging connector was not defined",
+			"undefinedPushNotificationMessagingConnector": "Push notification messaging connector was not defined",
+			"undefinedSmsMessagingConnector": "SMS messaging connector was not defined"
+		}
+	}
+}
