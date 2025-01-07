@@ -16,17 +16,11 @@ Create a new instance of AwsMessagingSmsConnector.
 
 #### Parameters
 
-• **options**
+##### options
+
+[`IAwsMessagingSmsConnectorConstructorOptions`](../interfaces/IAwsMessagingSmsConnectorConstructorOptions.md)
 
 The options for the connector.
-
-• **options.loggingConnectorType?**: `string`
-
-The type of logging connector to use, defaults to no logging.
-
-• **options.config**: [`IAwsSmsConnectorConfig`](../interfaces/IAwsSmsConnectorConfig.md)
-
-The configuration for the AWS connector.
 
 #### Returns
 
@@ -62,11 +56,15 @@ Send a SMS message to a phone number.
 
 #### Parameters
 
-• **phoneNumber**: `string`
+##### phoneNumber
+
+`string`
 
 The recipient phone number.
 
-• **message**: `string`
+##### message
+
+`string`
 
 The message to send.
 

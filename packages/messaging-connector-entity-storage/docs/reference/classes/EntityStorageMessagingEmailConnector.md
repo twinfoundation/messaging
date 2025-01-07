@@ -16,17 +16,11 @@ Create a new instance of EntityStorageMessagingEmailConnector.
 
 #### Parameters
 
-• **options?**
+##### options?
+
+[`IEntityStorageMessagingEmailConnectorConstructorOptions`](../interfaces/IEntityStorageMessagingEmailConnectorConstructorOptions.md)
 
 The options for the connector.
-
-• **options.loggingConnectorType?**: `string`
-
-The type of logging connector to use, defaults to no logging.
-
-• **options.messagingEmailEntryStorageConnectorType?**: `string`
-
-The type of entity storage connector to use for the email entries, defaults to "email-entry".
 
 #### Returns
 
@@ -62,19 +56,27 @@ Store a custom email using Entity Storage.
 
 #### Parameters
 
-• **sender**: `string`
+##### sender
+
+`string`
 
 The sender email address.
 
-• **recipients**: `string`[]
+##### recipients
+
+`string`[]
 
 An array of recipients email addresses.
 
-• **subject**: `string`
+##### subject
+
+`string`
 
 The subject of the email.
 
-• **content**: `string`
+##### content
+
+`string`
 
 The html content of the email.
 

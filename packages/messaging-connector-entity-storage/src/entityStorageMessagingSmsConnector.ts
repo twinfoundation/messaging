@@ -9,6 +9,7 @@ import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/loggi
 import type { IMessagingSmsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import type { SmsEntry } from "./entities/smsEntry";
+import type { IEntityStorageMessagingSmsConnectorConstructorOptions } from "./models/IEntityStorageMessagingSmsConnectorConstructorOptions";
 
 /**
  * Class for connecting to the SMS messaging operations of the Entity Storage.
@@ -39,13 +40,8 @@ export class EntityStorageMessagingSmsConnector implements IMessagingSmsConnecto
 	/**
 	 * Create a new instance of EntityStorageMessagingSmsConnector.
 	 * @param options The options for the connector.
-	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.messagingSmsEntryStorageConnectorType The type of entity storage connector to use for the sms entries, defaults to "sms-entry".
 	 */
-	constructor(options?: {
-		loggingConnectorType?: string;
-		messagingSmsEntryStorageConnectorType?: string;
-	}) {
+	constructor(options?: IEntityStorageMessagingSmsConnectorConstructorOptions) {
 		if (Is.stringValue(options?.loggingConnectorType)) {
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}

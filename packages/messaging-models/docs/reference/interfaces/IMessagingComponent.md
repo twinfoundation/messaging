@@ -16,23 +16,31 @@ Send a custom email.
 
 #### Parameters
 
-• **sender**: `string`
+##### sender
+
+`string`
 
 The sender email address.
 
-• **recipients**: `string`[]
+##### recipients
+
+`string`[]
 
 An array of recipients email addresses.
 
-• **templateId**: `string`
+##### templateId
+
+`string`
 
 The id of the email template.
 
-• **data**
+##### data
 
 The data to populate the email template.
 
-• **locale**: `string`
+##### locale
+
+`string`
 
 The locale of the email template.
 
@@ -52,11 +60,15 @@ Registers a device to an specific app in order to send notifications to it.
 
 #### Parameters
 
-• **applicationAddress**: `string`
+##### applicationAddress
+
+`string`
 
 The application address.
 
-• **deviceToken**: `string`
+##### deviceToken
+
+`string`
 
 The device token.
 
@@ -76,19 +88,25 @@ Send a push notification to a device.
 
 #### Parameters
 
-• **deviceAddress**: `string`
+##### deviceAddress
+
+`string`
 
 The address of the device.
 
-• **templateId**: `string`
+##### templateId
+
+`string`
 
 The id of the push notification template.
 
-• **data**
+##### data
 
 The data to populate the push notification template.
 
-• **locale**: `string`
+##### locale
+
+`string`
 
 The locale of the push notification template.
 
@@ -108,19 +126,25 @@ Send a SMS message to a phone number.
 
 #### Parameters
 
-• **phoneNumber**: `string`
+##### phoneNumber
+
+`string`
 
 The recipient phone number.
 
-• **templateId**: `string`
+##### templateId
+
+`string`
 
 The id of the SMS template.
 
-• **data**
+##### data
 
 The data to populate the SMS template.
 
-• **locale**: `string`
+##### locale
+
+`string`
 
 The locale of the SMS template.
 

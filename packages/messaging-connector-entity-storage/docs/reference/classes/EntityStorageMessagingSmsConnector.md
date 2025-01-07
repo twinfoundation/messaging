@@ -16,17 +16,11 @@ Create a new instance of EntityStorageMessagingSmsConnector.
 
 #### Parameters
 
-• **options?**
+##### options?
+
+[`IEntityStorageMessagingSmsConnectorConstructorOptions`](../interfaces/IEntityStorageMessagingSmsConnectorConstructorOptions.md)
 
 The options for the connector.
-
-• **options.loggingConnectorType?**: `string`
-
-The type of logging connector to use, defaults to no logging.
-
-• **options.messagingSmsEntryStorageConnectorType?**: `string`
-
-The type of entity storage connector to use for the sms entries, defaults to "sms-entry".
 
 #### Returns
 
@@ -62,11 +56,15 @@ Send a SMS message to a phone number.
 
 #### Parameters
 
-• **phoneNumber**: `string`
+##### phoneNumber
+
+`string`
 
 The recipient phone number.
 
-• **message**: `string`
+##### message
+
+`string`
 
 The message to send.
 

@@ -9,6 +9,7 @@ import { LoggingConnectorFactory, type ILoggingConnector } from "@twin.org/loggi
 import type { IMessagingEmailConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import type { EmailEntry } from "./entities/emailEntry";
+import type { IEntityStorageMessagingEmailConnectorConstructorOptions } from "./models/IEntityStorageMessagingEmailConnectorConstructorOptions";
 
 /**
  * Class for connecting to the email messaging operations of the Entity Storage.
@@ -39,13 +40,8 @@ export class EntityStorageMessagingEmailConnector implements IMessagingEmailConn
 	/**
 	 * Create a new instance of EntityStorageMessagingEmailConnector.
 	 * @param options The options for the connector.
-	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.messagingEmailEntryStorageConnectorType The type of entity storage connector to use for the email entries, defaults to "email-entry".
 	 */
-	constructor(options?: {
-		loggingConnectorType?: string;
-		messagingEmailEntryStorageConnectorType?: string;
-	}) {
+	constructor(options?: IEntityStorageMessagingEmailConnectorConstructorOptions) {
 		if (Is.stringValue(options?.loggingConnectorType)) {
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}

@@ -5,6 +5,7 @@ import { GeneralError, Guards, Is } from "@twin.org/core";
 import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/logging-models";
 import type { IMessagingSmsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
+import type { IAwsMessagingSmsConnectorConstructorOptions } from "./models/IAwsMessagingSmsConnectorConstructorOptions";
 import type { IAwsSmsConnectorConfig } from "./models/IAwsSmsConnectorConfig";
 
 /**
@@ -42,10 +43,8 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 	/**
 	 * Create a new instance of AwsMessagingSmsConnector.
 	 * @param options The options for the connector.
-	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.config The configuration for the AWS connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; config: IAwsSmsConnectorConfig }) {
+	constructor(options: IAwsMessagingSmsConnectorConstructorOptions) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
 		Guards.object<IAwsSmsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);

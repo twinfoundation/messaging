@@ -16,19 +16,27 @@ Send a custom email.
 
 #### Parameters
 
-• **sender**: `string`
+##### sender
+
+`string`
 
 The sender email address.
 
-• **recipients**: `string`[]
+##### recipients
+
+`string`[]
 
 An array of recipients email addresses.
 
-• **subject**: `string`
+##### subject
+
+`string`
 
 The subject of the email.
 
-• **content**: `string`
+##### content
+
+`string`
 
 The html content of the email.
 

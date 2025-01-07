@@ -7,6 +7,7 @@ import type { IMessagingEmailConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import { HttpStatusCode } from "@twin.org/web";
 import type { IAwsEmailConnectorConfig } from "./models/IAwsEmailConnectorConfig";
+import type { IAwsMessagingEmailConnectorConstructorOptions } from "./models/IAwsMessagingEmailConnectorConstructorOptions";
 
 /**
  * Class for connecting to the email messaging operations of the AWS services.
@@ -43,10 +44,8 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	/**
 	 * Create a new instance of AwsMessagingEmailConnector.
 	 * @param options The options for the connector.
-	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.config The configuration for the SES connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; config: IAwsEmailConnectorConfig }) {
+	constructor(options: IAwsMessagingEmailConnectorConstructorOptions) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
 		Guards.object<IAwsEmailConnectorConfig>(
 			this.CLASS_NAME,

@@ -10,6 +10,7 @@ import type { IMessagingPushNotificationsConnector } from "@twin.org/messaging-m
 import { nameof } from "@twin.org/nameof";
 import type { PushNotificationDeviceEntry } from "./entities/pushNotificationDeviceEntry";
 import type { PushNotificationMessageEntry } from "./entities/pushNotificationMessageEntry";
+import type { IEntityStorageMessagingPushNotificationConnectorConstructorOptions } from "./models/IEntityStorageMessagingPushNotificationConnectorConstructorOptions";
 
 /**
  * Class for connecting to the push notifications messaging operations of the Entity Storage.
@@ -48,15 +49,8 @@ export class EntityStorageMessagingPushNotificationConnector
 	/**
 	 * Create a new instance of EntityStorageMessagingPushNotificationConnector.
 	 * @param options The options for the connector.
-	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.messagingDeviceEntryStorageConnectorType The type of entity storage connector to use for the push notifications entries, defaults to "push-notification-device-entry".
-	 * @param options.messagingMessageEntryStorageConnectorType The type of entity storage connector to use for the push notifications entries, defaults to "push-notification-message-entry".
 	 */
-	constructor(options?: {
-		loggingConnectorType?: string;
-		messagingDeviceEntryStorageConnectorType?: string;
-		messagingMessageEntryStorageConnectorType?: string;
-	}) {
+	constructor(options?: IEntityStorageMessagingPushNotificationConnectorConstructorOptions) {
 		if (Is.stringValue(options?.loggingConnectorType)) {
 			this._logging = LoggingConnectorFactory.get(options.loggingConnectorType);
 		}

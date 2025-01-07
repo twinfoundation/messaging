@@ -7,4 +7,7 @@ export * from "./entities/smsEntry";
 export * from "./entityStorageMessagingEmailConnector";
 export * from "./entityStorageMessagingPushNotificationConnector";
 export * from "./entityStorageMessagingSmsConnector";
+export * from "./models/IEntityStorageMessagingEmailConnectorConstructorOptions";
+export * from "./models/IEntityStorageMessagingPushNotificationConnectorConstructorOptions";
+export * from "./models/IEntityStorageMessagingSmsConnectorConstructorOptions";
 export * from "./schema";

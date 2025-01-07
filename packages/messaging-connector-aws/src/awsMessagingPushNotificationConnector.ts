@@ -14,6 +14,7 @@ import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/loggi
 import type { IMessagingPushNotificationsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import { HttpStatusCode } from "@twin.org/web";
+import type { IAwsMessagingPushNotificationConnectorConstructorOptions } from "./models/IAwsMessagingPushNotificationConnectorConstructorOptions";
 import type { IAwsPushNotificationConnectorConfig } from "./models/IAwsPushNotificationConnectorConfig";
 
 /**
@@ -57,13 +58,8 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	/**
 	 * Create a new instance of AwsMessagingPushNotificationConnector.
 	 * @param options The options for the connector.
-	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.config The configuration for the AWS connector.
 	 */
-	constructor(options: {
-		loggingConnectorType?: string;
-		config: IAwsPushNotificationConnectorConfig;
-	}) {
+	constructor(options: IAwsMessagingPushNotificationConnectorConstructorOptions) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
 		Guards.object<IAwsPushNotificationConnectorConfig>(
 			this.CLASS_NAME,

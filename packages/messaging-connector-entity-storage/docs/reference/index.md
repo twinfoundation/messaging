@@ -10,6 +10,12 @@
 - [EntityStorageMessagingPushNotificationConnector](classes/EntityStorageMessagingPushNotificationConnector.md)
 - [EntityStorageMessagingSmsConnector](classes/EntityStorageMessagingSmsConnector.md)
 
+## Interfaces
+
+- [IEntityStorageMessagingEmailConnectorConstructorOptions](interfaces/IEntityStorageMessagingEmailConnectorConstructorOptions.md)
+- [IEntityStorageMessagingPushNotificationConnectorConstructorOptions](interfaces/IEntityStorageMessagingPushNotificationConnectorConstructorOptions.md)
+- [IEntityStorageMessagingSmsConnectorConstructorOptions](interfaces/IEntityStorageMessagingSmsConnectorConstructorOptions.md)
+
 ## Functions
 
 - [initSchema](functions/initSchema.md)

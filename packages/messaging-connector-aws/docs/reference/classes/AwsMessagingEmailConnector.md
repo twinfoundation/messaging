@@ -16,17 +16,11 @@ Create a new instance of AwsMessagingEmailConnector.
 
 #### Parameters
 
-• **options**
+##### options
+
+[`IAwsMessagingEmailConnectorConstructorOptions`](../interfaces/IAwsMessagingEmailConnectorConstructorOptions.md)
 
 The options for the connector.
-
-• **options.loggingConnectorType?**: `string`
-
-The type of logging connector to use, defaults to no logging.
-
-• **options.config**: [`IAwsEmailConnectorConfig`](../interfaces/IAwsEmailConnectorConfig.md)
-
-The configuration for the SES connector.
 
 #### Returns
 
@@ -62,19 +56,27 @@ Send a custom email using AWS SES.
 
 #### Parameters
 
-• **sender**: `string`
+##### sender
+
+`string`
 
 The sender email address.
 
-• **recipients**: `string`[]
+##### recipients
+
+`string`[]
 
 An array of recipients email addresses.
 
-• **subject**: `string`
+##### subject
+
+`string`
 
 The subject of the email.
 
-• **content**: `string`
+##### content
+
+`string`
 
 The html content of the email.
 

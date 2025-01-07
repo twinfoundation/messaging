@@ -16,6 +16,7 @@ import {
 } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import { TemplateEntry } from "./entities/templateEntry";
+import type { IMessagingServiceConstructorOptions } from "./models/IMessagingServiceConstructorOptions";
 
 /**
  * Service for performing email messaging operations to a connector.
@@ -58,17 +59,8 @@ export class MessagingService implements IMessagingComponent {
 	/**
 	 * Create a new instance of MessagingService.
 	 * @param options The options for the connector.
-	 * @param options.messagingEmailConnectorType The type of the email messaging connector to use, defaults to not configured.
-	 * @param options.messagingPushNotificationConnectorType The type of the push notifications messaging connector to use, defaults to not configured.
-	 * @param options.messagingSmsConnectorType The type of the sms messaging connector to use, defaults to not configured.
-	 * @param options.templateEntryStorageConnectorType The type of the entity connector to use, defaults to "messaging-templates".
 	 */
-	constructor(options?: {
-		messagingEmailConnectorType?: string;
-		messagingPushNotificationConnectorType?: string;
-		messagingSmsConnectorType?: string;
-		templateEntryStorageConnectorType?: string;
-	}) {
+	constructor(options?: IMessagingServiceConstructorOptions) {
 		if (Is.stringValue(options?.messagingEmailConnectorType)) {
 			this._emailMessagingConnector = MessagingEmailConnectorFactory.get(
 				options.messagingEmailConnectorType
