@@ -41,6 +41,6 @@ export class SmsEntry {
 	/**
 	 * The error.
 	 */
-	@property({ type: "object" })
+	@property({ type: "object", optional: true })
 	public error?: IError;
 }
