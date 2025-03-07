@@ -10,19 +10,19 @@ Initialize the schema for the messaging connector entity storage.
 
 The options for the initialisation.
 
-#### email
+#### email?
 
 `boolean`
 
 Should we register email schemas.
 
-#### sms
+#### sms?
 
 `boolean`
 
 Should we register sms schemas.
 
-#### pushNotification
+#### pushNotification?
 
 `boolean`
 
