@@ -50,7 +50,7 @@ The message.
 
 > **ts**: `number`
 
-The timestamp of the push notification entry.
+The timestamp of the push notification entry sorted.
 
 ***
 

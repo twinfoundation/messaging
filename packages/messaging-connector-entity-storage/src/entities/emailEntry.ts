@@ -27,7 +27,7 @@ export class EmailEntry {
 	public recipients!: string[];
 
 	/**
-	 * The timestamp of the email entry.
+	 * The timestamp of the email entry sorted.
 	 */
 	@property({ type: "integer", format: "uint64", sortDirection: SortDirection.Descending })
 	public ts!: number;

@@ -34,7 +34,7 @@ The phone number to deliver the message.
 
 > **ts**: `number`
 
-The timestamp of the sms entry.
+The timestamp of the sms entry sorted.
 
 ***
 

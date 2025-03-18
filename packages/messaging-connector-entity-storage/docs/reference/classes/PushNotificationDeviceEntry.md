@@ -42,7 +42,7 @@ The device token.
 
 > **ts**: `number`
 
-The timestamp of the push notification device entry.
+The timestamp of the push notification device entry sorted.
 
 ***
 

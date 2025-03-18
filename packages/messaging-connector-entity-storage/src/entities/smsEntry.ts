@@ -21,7 +21,7 @@ export class SmsEntry {
 	public phoneNumber!: string;
 
 	/**
-	 * The timestamp of the sms entry.
+	 * The timestamp of the sms entry sorted.
 	 */
 	@property({ type: "integer", format: "uint64", sortDirection: SortDirection.Descending })
 	public ts!: number;

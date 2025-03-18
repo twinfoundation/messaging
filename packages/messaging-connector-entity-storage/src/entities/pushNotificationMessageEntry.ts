@@ -33,7 +33,7 @@ export class PushNotificationMessageEntry {
 	public message!: string;
 
 	/**
-	 * The timestamp of the push notification entry.
+	 * The timestamp of the push notification entry sorted.
 	 */
 	@property({ type: "integer", format: "uint64", sortDirection: SortDirection.Descending })
 	public ts!: number;

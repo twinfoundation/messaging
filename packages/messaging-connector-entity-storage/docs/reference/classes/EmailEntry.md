@@ -42,7 +42,7 @@ The recipient email addresses.
 
 > **ts**: `number`
 
-The timestamp of the email entry.
+The timestamp of the email entry sorted.
 
 ***
 

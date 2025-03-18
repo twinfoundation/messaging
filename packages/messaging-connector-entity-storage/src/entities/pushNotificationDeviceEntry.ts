@@ -27,7 +27,7 @@ export class PushNotificationDeviceEntry {
 	public deviceToken!: string;
 
 	/**
-	 * The timestamp of the push notification device entry.
+	 * The timestamp of the push notification device entry sorted.
 	 */
 	@property({ type: "integer", format: "uint64", sortDirection: SortDirection.Descending })
 	public ts!: number;
