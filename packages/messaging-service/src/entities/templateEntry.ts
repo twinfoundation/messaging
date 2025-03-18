@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { entity, property } from "@twin.org/entity";
+import { entity, property, SortDirection } from "@twin.org/entity";
 
 /**
  * Call defining a template message entry.
@@ -28,6 +28,6 @@ export class TemplateEntry {
 	/**
 	 * The timestamp of the template entry.
 	 */
-	@property({ type: "integer" })
+	@property({ type: "integer", format: "uint64", sortDirection: SortDirection.Descending })
 	public ts!: number;
 }
