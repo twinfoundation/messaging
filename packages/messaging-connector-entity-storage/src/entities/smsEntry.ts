@@ -1,7 +1,7 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
 import type { IError } from "@twin.org/core";
-import { entity, property } from "@twin.org/entity";
+import { entity, property, SortDirection } from "@twin.org/entity";
 
 /**
  * Call defining an sms entry.
@@ -23,7 +23,7 @@ export class SmsEntry {
 	/**
 	 * The timestamp of the sms entry.
 	 */
-	@property({ type: "integer" })
+	@property({ type: "integer", format: "uint64", sortDirection: SortDirection.Descending })
 	public ts!: number;
 
 	/**
