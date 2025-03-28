@@ -91,7 +91,7 @@ jobs:
 
       # Setup any services required for tests here
       - name: Start LocalStack
-        if: matrix.package == 'packages/message-connector-aws'
+        if: matrix.package == 'packages/messaging-connector-aws'
         run: |
           docker run -d \
             --name localstack \
