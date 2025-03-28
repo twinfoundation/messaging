@@ -102,6 +102,7 @@ jobs:
             -e SERVICES=sns,ses \
             localstack/localstack:latest
       # End setup for tests
+
       # Remove the root package.json to prevent dependency conflicts
       - name: Remove Mono-Repo Node Modules
         run: |
