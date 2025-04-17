@@ -8,9 +8,9 @@ Class for connecting to the SMS messaging operations of the AWS services.
 
 ## Constructors
 
-### new AwsMessagingSmsConnector()
+### Constructor
 
-> **new AwsMessagingSmsConnector**(`options`): [`AwsMessagingSmsConnector`](AwsMessagingSmsConnector.md)
+> **new AwsMessagingSmsConnector**(`options`): `AwsMessagingSmsConnector`
 
 Create a new instance of AwsMessagingSmsConnector.
 
@@ -24,7 +24,7 @@ The options for the connector.
 
 #### Returns
 
-[`AwsMessagingSmsConnector`](AwsMessagingSmsConnector.md)
+`AwsMessagingSmsConnector`
 
 ## Properties
 

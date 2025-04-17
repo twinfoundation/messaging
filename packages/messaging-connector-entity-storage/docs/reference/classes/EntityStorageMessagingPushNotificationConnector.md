@@ -8,9 +8,9 @@ Class for connecting to the push notifications messaging operations of the Entit
 
 ## Constructors
 
-### new EntityStorageMessagingPushNotificationConnector()
+### Constructor
 
-> **new EntityStorageMessagingPushNotificationConnector**(`options`?): [`EntityStorageMessagingPushNotificationConnector`](EntityStorageMessagingPushNotificationConnector.md)
+> **new EntityStorageMessagingPushNotificationConnector**(`options?`): `EntityStorageMessagingPushNotificationConnector`
 
 Create a new instance of EntityStorageMessagingPushNotificationConnector.
 
@@ -24,7 +24,7 @@ The options for the connector.
 
 #### Returns
 
-[`EntityStorageMessagingPushNotificationConnector`](EntityStorageMessagingPushNotificationConnector.md)
+`EntityStorageMessagingPushNotificationConnector`
 
 ## Properties
 

@@ -8,9 +8,9 @@ Class for connecting to the email messaging operations of the Entity Storage.
 
 ## Constructors
 
-### new EntityStorageMessagingEmailConnector()
+### Constructor
 
-> **new EntityStorageMessagingEmailConnector**(`options`?): [`EntityStorageMessagingEmailConnector`](EntityStorageMessagingEmailConnector.md)
+> **new EntityStorageMessagingEmailConnector**(`options?`): `EntityStorageMessagingEmailConnector`
 
 Create a new instance of EntityStorageMessagingEmailConnector.
 
@@ -24,7 +24,7 @@ The options for the connector.
 
 #### Returns
 
-[`EntityStorageMessagingEmailConnector`](EntityStorageMessagingEmailConnector.md)
+`EntityStorageMessagingEmailConnector`
 
 ## Properties
 

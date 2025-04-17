@@ -1,6 +1,6 @@
 # Function: initSchema()
 
-> **initSchema**(`options`?): `void`
+> **initSchema**(`options?`): `void`
 
 Initialize the schema for the messaging connector entity storage.
 

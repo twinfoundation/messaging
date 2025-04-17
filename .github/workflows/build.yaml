@@ -45,7 +45,6 @@ jobs:
             -e SERVICES=sns,ses \
             localstack/localstack:latest
       # End setup for tests
-
       # Run Lint and Dist
       - name: Run Lint and Dist
         run: |

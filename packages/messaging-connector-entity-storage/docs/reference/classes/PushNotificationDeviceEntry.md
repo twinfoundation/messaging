@@ -4,13 +4,13 @@ Call defining an push notification device entry.
 
 ## Constructors
 
-### new PushNotificationDeviceEntry()
+### Constructor
 
-> **new PushNotificationDeviceEntry**(): [`PushNotificationDeviceEntry`](PushNotificationDeviceEntry.md)
+> **new PushNotificationDeviceEntry**(): `PushNotificationDeviceEntry`
 
 #### Returns
 
-[`PushNotificationDeviceEntry`](PushNotificationDeviceEntry.md)
+`PushNotificationDeviceEntry`
 
 ## Properties
 

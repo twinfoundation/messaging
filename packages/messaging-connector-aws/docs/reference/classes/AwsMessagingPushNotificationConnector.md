@@ -8,9 +8,9 @@ Class for connecting to the push notifications messaging operations of the AWS s
 
 ## Constructors
 
-### new AwsMessagingPushNotificationConnector()
+### Constructor
 
-> **new AwsMessagingPushNotificationConnector**(`options`): [`AwsMessagingPushNotificationConnector`](AwsMessagingPushNotificationConnector.md)
+> **new AwsMessagingPushNotificationConnector**(`options`): `AwsMessagingPushNotificationConnector`
 
 Create a new instance of AwsMessagingPushNotificationConnector.
 
@@ -24,7 +24,7 @@ The options for the connector.
 
 #### Returns
 
-[`AwsMessagingPushNotificationConnector`](AwsMessagingPushNotificationConnector.md)
+`AwsMessagingPushNotificationConnector`
 
 ## Properties
 
@@ -50,7 +50,7 @@ Runtime name for the class.
 
 ### start()
 
-> **start**(`nodeIdentity`, `nodeLoggingConnectorType`?): `Promise`\<`void`\>
+> **start**(`nodeIdentity`, `nodeLoggingConnectorType?`): `Promise`\<`void`\>
 
 The component needs to be started when the node is initialized.
 

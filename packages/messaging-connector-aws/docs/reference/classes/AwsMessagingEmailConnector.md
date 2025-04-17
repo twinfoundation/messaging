@@ -8,9 +8,9 @@ Class for connecting to the email messaging operations of the AWS services.
 
 ## Constructors
 
-### new AwsMessagingEmailConnector()
+### Constructor
 
-> **new AwsMessagingEmailConnector**(`options`): [`AwsMessagingEmailConnector`](AwsMessagingEmailConnector.md)
+> **new AwsMessagingEmailConnector**(`options`): `AwsMessagingEmailConnector`
 
 Create a new instance of AwsMessagingEmailConnector.
 
@@ -24,7 +24,7 @@ The options for the connector.
 
 #### Returns
 
-[`AwsMessagingEmailConnector`](AwsMessagingEmailConnector.md)
+`AwsMessagingEmailConnector`
 
 ## Properties
 
