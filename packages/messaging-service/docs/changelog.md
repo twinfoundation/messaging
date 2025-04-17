@@ -1,5 +1,19 @@
 # @twin.org/messaging-service - Changelog
 
+## [0.0.1-next.14](https://github.com/twinfoundation/messaging/compare/messaging-service-v0.0.1-next.13...messaging-service-v0.0.1-next.14) (2025-04-17)
+
+
+### Features
+
+* use shared store mechanism ([#8](https://github.com/twinfoundation/messaging/issues/8)) ([9ad65c2](https://github.com/twinfoundation/messaging/commit/9ad65c239ba77bb75604a1f6e51b975357f3228d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/messaging-models bumped from 0.0.1-next.13 to 0.0.1-next.14
+
 ## [0.0.1-next.13](https://github.com/twinfoundation/messaging/compare/messaging-service-v0.0.1-next.12...messaging-service-v0.0.1-next.13) (2025-03-28)
 
 
