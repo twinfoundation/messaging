@@ -4,13 +4,13 @@ Call defining an push notification message entry.
 
 ## Constructors
 
-### new PushNotificationMessageEntry()
+### Constructor
 
-> **new PushNotificationMessageEntry**(): [`PushNotificationMessageEntry`](PushNotificationMessageEntry.md)
+> **new PushNotificationMessageEntry**(): `PushNotificationMessageEntry`
 
 #### Returns
 
-[`PushNotificationMessageEntry`](PushNotificationMessageEntry.md)
+`PushNotificationMessageEntry`
 
 ## Properties
 

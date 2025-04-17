@@ -8,9 +8,9 @@ Class for connecting to the SMS messaging operations of the Entity Storage.
 
 ## Constructors
 
-### new EntityStorageMessagingSmsConnector()
+### Constructor
 
-> **new EntityStorageMessagingSmsConnector**(`options`?): [`EntityStorageMessagingSmsConnector`](EntityStorageMessagingSmsConnector.md)
+> **new EntityStorageMessagingSmsConnector**(`options?`): `EntityStorageMessagingSmsConnector`
 
 Create a new instance of EntityStorageMessagingSmsConnector.
 
@@ -24,7 +24,7 @@ The options for the connector.
 
 #### Returns
 
-[`EntityStorageMessagingSmsConnector`](EntityStorageMessagingSmsConnector.md)
+`EntityStorageMessagingSmsConnector`
 
 ## Properties
 

@@ -4,13 +4,13 @@ Call defining an email entry.
 
 ## Constructors
 
-### new EmailEntry()
+### Constructor
 
-> **new EmailEntry**(): [`EmailEntry`](EmailEntry.md)
+> **new EmailEntry**(): `EmailEntry`
 
 #### Returns
 
-[`EmailEntry`](EmailEntry.md)
+`EmailEntry`
 
 ## Properties
 

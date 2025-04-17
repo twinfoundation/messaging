@@ -4,13 +4,13 @@ Call defining an sms entry.
 
 ## Constructors
 
-### new SmsEntry()
+### Constructor
 
-> **new SmsEntry**(): [`SmsEntry`](SmsEntry.md)
+> **new SmsEntry**(): `SmsEntry`
 
 #### Returns
 
-[`SmsEntry`](SmsEntry.md)
+`SmsEntry`
 
 ## Properties
 

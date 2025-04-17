@@ -8,9 +8,9 @@ Service for performing email messaging operations to a connector.
 
 ## Constructors
 
-### new MessagingService()
+### Constructor
 
-> **new MessagingService**(`options`?): [`MessagingService`](MessagingService.md)
+> **new MessagingService**(`options?`): `MessagingService`
 
 Create a new instance of MessagingService.
 
@@ -24,7 +24,7 @@ The options for the connector.
 
 #### Returns
 
-[`MessagingService`](MessagingService.md)
+`MessagingService`
 
 ## Properties
 

@@ -4,13 +4,13 @@ Call defining a template message entry.
 
 ## Constructors
 
-### new TemplateEntry()
+### Constructor
 
-> **new TemplateEntry**(): [`TemplateEntry`](TemplateEntry.md)
+> **new TemplateEntry**(): `TemplateEntry`
 
 #### Returns
 
-[`TemplateEntry`](TemplateEntry.md)
+`TemplateEntry`
 
 ## Properties
 
