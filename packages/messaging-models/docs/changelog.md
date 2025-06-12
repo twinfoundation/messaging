@@ -1,5 +1,12 @@
 # @twin.org/messaging-models - Changelog
 
+## [0.0.1-next.15](https://github.com/twinfoundation/messaging/compare/messaging-models-v0.0.1-next.14...messaging-models-v0.0.1-next.15) (2025-06-12)
+
+
+### Features
+
+* update dependencies ([53dcde6](https://github.com/twinfoundation/messaging/commit/53dcde60d6efaee5957296f6d097cb97c0fb2f9d))
+
 ## [0.0.1-next.14](https://github.com/twinfoundation/messaging/compare/messaging-models-v0.0.1-next.13...messaging-models-v0.0.1-next.14) (2025-04-17)
 
 
