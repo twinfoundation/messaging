@@ -4,9 +4,9 @@ Configuration for the AWS Connector.
 
 ## Properties
 
-### endpoint
+### endpoint?
 
-> **endpoint**: `string`
+> `optional` **endpoint**: `string`
 
 The endpoint for the AWS instance.
 

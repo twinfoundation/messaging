@@ -11,12 +11,12 @@ import {
 } from "@twin.org/logging-connector-entity-storage";
 import { LoggingConnectorFactory } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
-import { TEST_AWS_CONFIG } from "./setupTestEnv";
+import { TEST_AWS_CONFIG_PUSH } from "./setupTestEnv";
 import { AwsMessagingPushNotificationConnector } from "../src/awsMessagingPushNotificationConnector";
-import type { IAwsConnectorConfig } from "../src/models/IAwsConnectorConfig";
+import type { IAwsPushNotificationConnectorConfig } from "../src/models/IAwsPushNotificationConnectorConfig";
 
 let memoryEntityStorage: MemoryEntityStorageConnector<LogEntry>;
-const configuration: IAwsConnectorConfig = TEST_AWS_CONFIG;
+const configuration: IAwsPushNotificationConnectorConfig = TEST_AWS_CONFIG_PUSH;
 
 describe("AwsMessagingPushNotificationConnector", () => {
 	beforeAll(async () => {
@@ -40,7 +40,7 @@ describe("AwsMessagingPushNotificationConnector", () => {
 				new AwsMessagingPushNotificationConnector(
 					undefined as unknown as {
 						entitySchema: string;
-						config: IAwsConnectorConfig;
+						config: IAwsPushNotificationConnectorConfig;
 					}
 				)
 		).toThrow(

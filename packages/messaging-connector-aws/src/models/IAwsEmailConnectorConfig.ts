@@ -8,7 +8,7 @@ export interface IAwsEmailConnectorConfig {
 	/**
 	 * The endpoint for the AWS instance.
 	 */
-	endpoint: string;
+	endpoint?: string;
 
 	/**
 	 * The region for the AWS instance.

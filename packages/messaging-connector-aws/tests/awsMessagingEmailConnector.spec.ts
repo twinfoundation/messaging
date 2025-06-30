@@ -13,10 +13,10 @@ import { LoggingConnectorFactory } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
 import { TEST_AWS_CONFIG } from "./setupTestEnv";
 import { AwsMessagingEmailConnector } from "../src/awsMessagingEmailConnector";
-import type { IAwsConnectorConfig } from "../src/models/IAwsConnectorConfig";
+import type { IAwsEmailConnectorConfig } from "../src/models/IAwsEmailConnectorConfig";
 
 let memoryEntityStorage: MemoryEntityStorageConnector<LogEntry>;
-const configuration: IAwsConnectorConfig = TEST_AWS_CONFIG;
+const configuration: IAwsEmailConnectorConfig = TEST_AWS_CONFIG;
 
 describe("AwsMessagingEmailConnector", () => {
 	beforeAll(async () => {
@@ -40,7 +40,7 @@ describe("AwsMessagingEmailConnector", () => {
 				new AwsMessagingEmailConnector(
 					undefined as unknown as {
 						entitySchema: string;
-						config: IAwsConnectorConfig;
+						config: IAwsEmailConnectorConfig;
 					}
 				)
 		).toThrow(

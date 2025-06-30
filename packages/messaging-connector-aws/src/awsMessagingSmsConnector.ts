@@ -47,7 +47,6 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 	constructor(options: IAwsMessagingSmsConnectorConstructorOptions) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
 		Guards.object<IAwsSmsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
 		Guards.stringValue(
 			this.CLASS_NAME,
@@ -65,6 +64,9 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 		}
 
 		this._config = options.config;
+		this._config.endpoint = Is.stringValue(this._config.endpoint)
+			? this._config.endpoint
+			: undefined;
 		this._client = new SNSClient({
 			endpoint: this._config.endpoint,
 			region: this._config.region,

@@ -52,7 +52,6 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 			nameof(options.config),
 			options.config
 		);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
 		Guards.stringValue(
 			this.CLASS_NAME,
@@ -70,6 +69,9 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 		}
 
 		this._config = options.config;
+		this._config.endpoint = Is.stringValue(this._config.endpoint)
+			? this._config.endpoint
+			: undefined;
 		this._client = new SESClient({
 			endpoint: this._config.endpoint,
 			region: this._config.region,
