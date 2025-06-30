@@ -1,5 +1,19 @@
 # @twin.org/messaging-connector-aws - Changelog
 
+## [0.0.1-next.16](https://github.com/twinfoundation/messaging/compare/messaging-connector-aws-v0.0.1-next.15...messaging-connector-aws-v0.0.1-next.16) (2025-06-30)
+
+
+### Bug Fixes
+
+* endpoint optional in config ([d79ab8f](https://github.com/twinfoundation/messaging/commit/d79ab8f570b826691cac67d114c3040b734dac7f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/messaging-models bumped from 0.0.1-next.15 to 0.0.1-next.16
+
 ## [0.0.1-next.15](https://github.com/twinfoundation/messaging/compare/messaging-connector-aws-v0.0.1-next.14...messaging-connector-aws-v0.0.1-next.15) (2025-06-12)
 
 

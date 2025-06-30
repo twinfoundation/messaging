@@ -1,5 +1,19 @@
 # @twin.org/messaging-connector-entity-storage - Changelog
 
+## [0.0.1-next.16](https://github.com/twinfoundation/messaging/compare/messaging-connector-entity-storage-v0.0.1-next.15...messaging-connector-entity-storage-v0.0.1-next.16) (2025-06-30)
+
+
+### Miscellaneous Chores
+
+* **messaging-connector-entity-storage:** Synchronize repo versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/messaging-models bumped from 0.0.1-next.15 to 0.0.1-next.16
+
 ## [0.0.1-next.15](https://github.com/twinfoundation/messaging/compare/messaging-connector-entity-storage-v0.0.1-next.14...messaging-connector-entity-storage-v0.0.1-next.15) (2025-06-12)
 
 
