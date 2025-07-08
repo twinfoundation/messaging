@@ -1,5 +1,19 @@
 # @twin.org/messaging-connector-entity-storage - Changelog
 
+## 0.0.1 (2025-07-08)
+
+
+### Features
+
+* release to production ([cc714a7](https://github.com/twinfoundation/messaging/commit/cc714a7e1db251ab8e1a158f7753387a56d60271))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/messaging-models bumped from ^0.0.0 to ^0.0.1
+
 ## [0.0.1-next.16](https://github.com/twinfoundation/messaging/compare/messaging-connector-entity-storage-v0.0.1-next.15...messaging-connector-entity-storage-v0.0.1-next.16) (2025-06-30)
 
 
