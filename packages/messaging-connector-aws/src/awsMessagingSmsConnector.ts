@@ -5,12 +5,18 @@ import { GeneralError, Guards, Is } from "@twin.org/core";
 import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/logging-models";
 import type { IMessagingSmsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
-import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
+import type { IAwsMessagingSmsConnectorConstructorOptions } from "./models/IAwsMessagingSmsConnectorConstructorOptions";
+import type { IAwsSmsConnectorConfig } from "./models/IAwsSmsConnectorConfig";
 
 /**
  * Class for connecting to the SMS messaging operations of the AWS services.
  */
 export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
+	/**
+	 * The namespace for the connector.
+	 */
+	public static readonly NAMESPACE: string = "aws";
+
 	/**
 	 * Runtime name for the class.
 	 */
@@ -26,7 +32,7 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 	 * The configuration for the AWS connector.
 	 * @internal
 	 */
-	private readonly _config: IAwsConnectorConfig;
+	private readonly _config: IAwsSmsConnectorConfig;
 
 	/**
 	 * The Aws SNS client.
@@ -37,13 +43,10 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 	/**
 	 * Create a new instance of AwsMessagingSmsConnector.
 	 * @param options The options for the connector.
-	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.config The configuration for the AWS connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; config: IAwsConnectorConfig }) {
+	constructor(options: IAwsMessagingSmsConnectorConstructorOptions) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IAwsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
+		Guards.object<IAwsSmsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
 		Guards.stringValue(
 			this.CLASS_NAME,
@@ -61,6 +64,9 @@ export class AwsMessagingSmsConnector implements IMessagingSmsConnector {
 		}
 
 		this._config = options.config;
+		this._config.endpoint = Is.stringValue(this._config.endpoint)
+			? this._config.endpoint
+			: undefined;
 		this._client = new SNSClient({
 			endpoint: this._config.endpoint,
 			region: this._config.region,

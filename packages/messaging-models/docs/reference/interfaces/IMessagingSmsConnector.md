@@ -16,11 +16,15 @@ Send a SMS message to a phone number.
 
 #### Parameters
 
-• **phoneNumber**: `string`
+##### phoneNumber
+
+`string`
 
 The recipient phone number.
 
-• **message**: `string`
+##### message
+
+`string`
 
 The message to send.
 

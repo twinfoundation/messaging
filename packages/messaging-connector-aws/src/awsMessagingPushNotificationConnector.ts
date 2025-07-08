@@ -13,12 +13,19 @@ import { GeneralError, Guards, Is } from "@twin.org/core";
 import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/logging-models";
 import type { IMessagingPushNotificationsConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
-import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
+import { HttpStatusCode } from "@twin.org/web";
+import type { IAwsMessagingPushNotificationConnectorConstructorOptions } from "./models/IAwsMessagingPushNotificationConnectorConstructorOptions";
+import type { IAwsPushNotificationConnectorConfig } from "./models/IAwsPushNotificationConnectorConfig";
 
 /**
- * Class for connecting to the email messaging operations of the AWS services.
+ * Class for connecting to the push notifications messaging operations of the AWS services.
  */
 export class AwsMessagingPushNotificationConnector implements IMessagingPushNotificationsConnector {
+	/**
+	 * The namespace for the connector.
+	 */
+	public static readonly NAMESPACE: string = "aws";
+
 	/**
 	 * Runtime name for the class.
 	 */
@@ -34,7 +41,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	 * The configuration for the client connector.
 	 * @internal
 	 */
-	private readonly _config: IAwsConnectorConfig;
+	private readonly _config: IAwsPushNotificationConnectorConfig;
 
 	/**
 	 * The Aws SNS client.
@@ -51,13 +58,14 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	/**
 	 * Create a new instance of AwsMessagingPushNotificationConnector.
 	 * @param options The options for the connector.
-	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.config The configuration for the AWS connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; config: IAwsConnectorConfig }) {
+	constructor(options: IAwsMessagingPushNotificationConnectorConstructorOptions) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IAwsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
+		Guards.object<IAwsPushNotificationConnectorConfig>(
+			this.CLASS_NAME,
+			nameof(options.config),
+			options.config
+		);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
 		Guards.stringValue(
 			this.CLASS_NAME,
@@ -81,6 +89,9 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 
 		this._applicationMap = new Map<string, string>();
 		this._config = options.config;
+		this._config.endpoint = Is.stringValue(this._config.endpoint)
+			? this._config.endpoint
+			: undefined;
 		this._client = new SNSClient({
 			endpoint: this._config.endpoint,
 			region: this._config.region,
@@ -99,7 +110,11 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 	 */
 	public async start(nodeIdentity: string, nodeLoggingConnectorType?: string): Promise<void> {
 		try {
-			await this._logging?.log({
+			const nodeLogging = LoggingConnectorFactory.getIfExists(
+				nodeLoggingConnectorType ?? "node-logging"
+			);
+
+			await nodeLogging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),
@@ -151,7 +166,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			});
 
 			const applicationArn = this._applicationMap.get(applicationId);
-			if (!applicationArn) {
+			if (Is.empty(applicationArn)) {
 				throw new GeneralError(this.CLASS_NAME, "applicationIdNotFound", {
 					property: "applicationId",
 					value: applicationId
@@ -164,13 +179,13 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			};
 			const existingEndpointArn = await this.checkIfDeviceTokenExists(applicationArn, deviceToken);
 
-			if (existingEndpointArn) {
+			if (Is.stringValue(existingEndpointArn)) {
 				return existingEndpointArn;
 			}
 			const command = new CreatePlatformEndpointCommand(createEndpointParams);
 			const data = await this._client.send(command);
 
-			if (!data.EndpointArn) {
+			if (!Is.stringValue(data.EndpointArn)) {
 				throw new GeneralError(this.CLASS_NAME, "deviceTokenRegisterFailed", {
 					property: "applicationId",
 					value: applicationId
@@ -225,7 +240,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			};
 			const command = new PublishCommand(publishMessageParams);
 			const data = await this._client.send(command);
-			if (data.$metadata.httpStatusCode !== 200) {
+			if (data.$metadata.httpStatusCode !== HttpStatusCode.ok) {
 				await this._logging?.log({
 					level: "error",
 					source: this.CLASS_NAME,
@@ -252,7 +267,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 
 	/**
 	 * Creates a platform application if it does not exist.
-	 * @param applicationId The application identificator.
+	 * @param applicationId The application identity.
 	 * @param platformType The type of platform used for the push notifications.
 	 * @param platformCredentials The credentials for the used platform.
 	 * @returns The platform application address.
@@ -267,7 +282,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 		Guards.stringValue(this.CLASS_NAME, nameof(platformCredentials), platformCredentials);
 		try {
 			const existingArn = await this.checkPlatformApplication(applicationId);
-			if (existingArn) {
+			if (Is.stringValue(existingArn)) {
 				this._applicationMap.set(applicationId, existingArn);
 				return existingArn;
 			}
@@ -289,7 +304,7 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 
 			const createCommand = new CreatePlatformApplicationCommand(createParams);
 			const createData = await this._client.send(createCommand);
-			if (createData.PlatformApplicationArn) {
+			if (Is.stringValue(createData.PlatformApplicationArn)) {
 				this._applicationMap.set(applicationId, createData.PlatformApplicationArn);
 				return createData.PlatformApplicationArn;
 			}
@@ -315,12 +330,12 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 			});
 			const listCommand = new ListPlatformApplicationsCommand({});
 			const data = await this._client.send(listCommand);
-			if (data.PlatformApplications) {
+			if (Is.arrayValue(data.PlatformApplications)) {
 				const existingApplication = data.PlatformApplications.find(app =>
 					app.PlatformApplicationArn?.includes(appName)
 				);
 
-				if (existingApplication?.PlatformApplicationArn) {
+				if (Is.stringValue(existingApplication?.PlatformApplicationArn)) {
 					return existingApplication.PlatformApplicationArn;
 				}
 			}
@@ -353,12 +368,12 @@ export class AwsMessagingPushNotificationConnector implements IMessagingPushNoti
 				PlatformApplicationArn: applicationAddress
 			});
 			const data: ListEndpointsByPlatformApplicationResponse = await this._client.send(command);
-			if (data.Endpoints) {
+			if (Is.arrayValue(data.Endpoints)) {
 				const existingEndpoint = data.Endpoints.find(
 					endpoint => endpoint.Attributes?.Token === deviceToken
 				);
 
-				if (existingEndpoint) {
+				if (!Is.empty(existingEndpoint)) {
 					return existingEndpoint.EndpointArn;
 				}
 			}

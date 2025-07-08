@@ -6,12 +6,18 @@ import { type ILoggingConnector, LoggingConnectorFactory } from "@twin.org/loggi
 import type { IMessagingEmailConnector } from "@twin.org/messaging-models";
 import { nameof } from "@twin.org/nameof";
 import { HttpStatusCode } from "@twin.org/web";
-import type { IAwsConnectorConfig } from "./models/IAwsConnectorConfig";
+import type { IAwsEmailConnectorConfig } from "./models/IAwsEmailConnectorConfig";
+import type { IAwsMessagingEmailConnectorConstructorOptions } from "./models/IAwsMessagingEmailConnectorConstructorOptions";
 
 /**
  * Class for connecting to the email messaging operations of the AWS services.
  */
 export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
+	/**
+	 * The namespace for the connector.
+	 */
+	public static readonly NAMESPACE: string = "aws";
+
 	/**
 	 * Runtime name for the class.
 	 */
@@ -27,7 +33,7 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	 * The configuration for the client connector.
 	 * @internal
 	 */
-	private readonly _config: IAwsConnectorConfig;
+	private readonly _config: IAwsEmailConnectorConfig;
 
 	/**
 	 * The Aws SES client.
@@ -38,13 +44,14 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	/**
 	 * Create a new instance of AwsMessagingEmailConnector.
 	 * @param options The options for the connector.
-	 * @param options.loggingConnectorType The type of logging connector to use, defaults to no logging.
-	 * @param options.config The configuration for the SES connector.
 	 */
-	constructor(options: { loggingConnectorType?: string; config: IAwsConnectorConfig }) {
+	constructor(options: IAwsMessagingEmailConnectorConstructorOptions) {
 		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IAwsConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
-		Guards.stringValue(this.CLASS_NAME, nameof(options.config.endpoint), options.config.endpoint);
+		Guards.object<IAwsEmailConnectorConfig>(
+			this.CLASS_NAME,
+			nameof(options.config),
+			options.config
+		);
 		Guards.stringValue(this.CLASS_NAME, nameof(options.config.region), options.config.region);
 		Guards.stringValue(
 			this.CLASS_NAME,
@@ -62,6 +69,9 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 		}
 
 		this._config = options.config;
+		this._config.endpoint = Is.stringValue(this._config.endpoint)
+			? this._config.endpoint
+			: undefined;
 		this._client = new SESClient({
 			endpoint: this._config.endpoint,
 			region: this._config.region,
@@ -75,19 +85,19 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 	/**
 	 * Send a custom email using AWS SES.
 	 * @param sender The sender email address.
-	 * @param receivers An array of receivers email addresses.
+	 * @param recipients An array of recipients email addresses.
 	 * @param subject The subject of the email.
 	 * @param content The html content of the email.
 	 * @returns True if the email was send successfully, otherwise undefined.
 	 */
 	public async sendCustomEmail(
 		sender: string,
-		receivers: string[],
+		recipients: string[],
 		subject: string,
 		content: string
 	): Promise<boolean> {
 		Guards.stringValue(this.CLASS_NAME, nameof(sender), sender);
-		Guards.arrayValue(this.CLASS_NAME, nameof(receivers), receivers);
+		Guards.arrayValue(this.CLASS_NAME, nameof(recipients), recipients);
 		Guards.stringValue(this.CLASS_NAME, nameof(subject), subject);
 		Guards.stringValue(this.CLASS_NAME, nameof(content), content);
 		try {
@@ -104,7 +114,7 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 			await this._client.send(command);
 			const result = await this._client.send(
 				new SendEmailCommand({
-					Destination: { ToAddresses: receivers },
+					Destination: { ToAddresses: recipients },
 					Message: {
 						Subject: {
 							Data: subject
@@ -129,8 +139,6 @@ export class AwsMessagingEmailConnector implements IMessagingEmailConnector {
 			}
 			return true;
 		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.log(err);
 			throw new GeneralError(this.CLASS_NAME, "sendCustomEmailFailed", undefined, err);
 		}
 	}

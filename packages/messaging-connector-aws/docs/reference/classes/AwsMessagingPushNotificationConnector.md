@@ -1,6 +1,6 @@
 # Class: AwsMessagingPushNotificationConnector
 
-Class for connecting to the email messaging operations of the AWS services.
+Class for connecting to the push notifications messaging operations of the AWS services.
 
 ## Implements
 
@@ -8,31 +8,33 @@ Class for connecting to the email messaging operations of the AWS services.
 
 ## Constructors
 
-### new AwsMessagingPushNotificationConnector()
+### Constructor
 
-> **new AwsMessagingPushNotificationConnector**(`options`): [`AwsMessagingPushNotificationConnector`](AwsMessagingPushNotificationConnector.md)
+> **new AwsMessagingPushNotificationConnector**(`options`): `AwsMessagingPushNotificationConnector`
 
 Create a new instance of AwsMessagingPushNotificationConnector.
 
 #### Parameters
 
-• **options**
+##### options
+
+[`IAwsMessagingPushNotificationConnectorConstructorOptions`](../interfaces/IAwsMessagingPushNotificationConnectorConstructorOptions.md)
 
 The options for the connector.
 
-• **options.loggingConnectorType?**: `string`
-
-The type of logging connector to use, defaults to no logging.
-
-• **options.config**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
-
-The configuration for the AWS connector.
-
 #### Returns
 
-[`AwsMessagingPushNotificationConnector`](AwsMessagingPushNotificationConnector.md)
+`AwsMessagingPushNotificationConnector`
 
 ## Properties
+
+### NAMESPACE
+
+> `readonly` `static` **NAMESPACE**: `string` = `"aws"`
+
+The namespace for the connector.
+
+***
 
 ### CLASS\_NAME
 
@@ -48,17 +50,21 @@ Runtime name for the class.
 
 ### start()
 
-> **start**(`nodeIdentity`, `nodeLoggingConnectorType`?): `Promise`\<`void`\>
+> **start**(`nodeIdentity`, `nodeLoggingConnectorType?`): `Promise`\<`void`\>
 
 The component needs to be started when the node is initialized.
 
 #### Parameters
 
-• **nodeIdentity**: `string`
+##### nodeIdentity
+
+`string`
 
 The identity of the node starting the component.
 
-• **nodeLoggingConnectorType?**: `string`
+##### nodeLoggingConnectorType?
+
+`string`
 
 The node logging connector type, defaults to "node-logging".
 
@@ -82,11 +88,15 @@ Registers a device to an specific app in order to send notifications to it.
 
 #### Parameters
 
-• **applicationId**: `string`
+##### applicationId
+
+`string`
 
 The application address.
 
-• **deviceToken**: `string`
+##### deviceToken
+
+`string`
 
 The device token.
 
@@ -110,15 +120,21 @@ Send a push notification to a device.
 
 #### Parameters
 
-• **deviceAddress**: `string`
+##### deviceAddress
+
+`string`
 
 The address of the device.
 
-• **title**: `string`
+##### title
+
+`string`
 
 The title of the notification.
 
-• **message**: `string`
+##### message
+
+`string`
 
 The message to send.
 

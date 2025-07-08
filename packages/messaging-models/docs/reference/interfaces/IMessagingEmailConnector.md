@@ -10,25 +10,33 @@ Interface describing the email messaging connector functionalities
 
 ### sendCustomEmail()
 
-> **sendCustomEmail**(`sender`, `receivers`, `subject`, `content`): `Promise`\<`boolean`\>
+> **sendCustomEmail**(`sender`, `recipients`, `subject`, `content`): `Promise`\<`boolean`\>
 
 Send a custom email.
 
 #### Parameters
 
-• **sender**: `string`
+##### sender
+
+`string`
 
 The sender email address.
 
-• **receivers**: `string`[]
+##### recipients
 
-An array of receivers email addresses.
+`string`[]
 
-• **subject**: `string`
+An array of recipients email addresses.
+
+##### subject
+
+`string`
 
 The subject of the email.
 
-• **content**: `string`
+##### content
+
+`string`
 
 The html content of the email.
 

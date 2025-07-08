@@ -8,31 +8,33 @@ Class for connecting to the SMS messaging operations of the AWS services.
 
 ## Constructors
 
-### new AwsMessagingSmsConnector()
+### Constructor
 
-> **new AwsMessagingSmsConnector**(`options`): [`AwsMessagingSmsConnector`](AwsMessagingSmsConnector.md)
+> **new AwsMessagingSmsConnector**(`options`): `AwsMessagingSmsConnector`
 
 Create a new instance of AwsMessagingSmsConnector.
 
 #### Parameters
 
-• **options**
+##### options
+
+[`IAwsMessagingSmsConnectorConstructorOptions`](../interfaces/IAwsMessagingSmsConnectorConstructorOptions.md)
 
 The options for the connector.
 
-• **options.loggingConnectorType?**: `string`
-
-The type of logging connector to use, defaults to no logging.
-
-• **options.config**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
-
-The configuration for the AWS connector.
-
 #### Returns
 
-[`AwsMessagingSmsConnector`](AwsMessagingSmsConnector.md)
+`AwsMessagingSmsConnector`
 
 ## Properties
+
+### NAMESPACE
+
+> `readonly` `static` **NAMESPACE**: `string` = `"aws"`
+
+The namespace for the connector.
+
+***
 
 ### CLASS\_NAME
 
@@ -54,11 +56,15 @@ Send a SMS message to a phone number.
 
 #### Parameters
 
-• **phoneNumber**: `string`
+##### phoneNumber
+
+`string`
 
 The recipient phone number.
 
-• **message**: `string`
+##### message
+
+`string`
 
 The message to send.
 

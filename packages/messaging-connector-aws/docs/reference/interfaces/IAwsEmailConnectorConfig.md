@@ -1,12 +1,12 @@
-# Interface: IAwsConnectorConfig
+# Interface: IAwsEmailConnectorConfig
 
 Configuration for the AWS Connector.
 
 ## Properties
 
-### endpoint
+### endpoint?
 
-> **endpoint**: `string`
+> `optional` **endpoint**: `string`
 
 The endpoint for the AWS instance.
 
@@ -33,11 +33,3 @@ The access key ID for the AWS instance.
 > **secretAccessKey**: `string`
 
 The secret access key for the AWS instance.
-
-***
-
-### applicationsSettings
-
-> **applicationsSettings**: [`IAwsApplicationSettings`](IAwsApplicationSettings.md)[]
-
-The applications settings for the push notifications.

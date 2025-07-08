@@ -34,10 +34,5 @@
 			"subscribeToTopicFailed": "Failed to subscribe to topic",
 			"sendTopicPushNotificationFailed": "Failed to send push notification to topic"
 		}
-	},
-	"warn": {
-		"awsMessagingConnector": {
-			"applicationSettingsMissing": "Application settings are missing"
-		}
 	}
 }

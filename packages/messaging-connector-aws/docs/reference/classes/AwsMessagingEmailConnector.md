@@ -8,31 +8,33 @@ Class for connecting to the email messaging operations of the AWS services.
 
 ## Constructors
 
-### new AwsMessagingEmailConnector()
+### Constructor
 
-> **new AwsMessagingEmailConnector**(`options`): [`AwsMessagingEmailConnector`](AwsMessagingEmailConnector.md)
+> **new AwsMessagingEmailConnector**(`options`): `AwsMessagingEmailConnector`
 
 Create a new instance of AwsMessagingEmailConnector.
 
 #### Parameters
 
-• **options**
+##### options
+
+[`IAwsMessagingEmailConnectorConstructorOptions`](../interfaces/IAwsMessagingEmailConnectorConstructorOptions.md)
 
 The options for the connector.
 
-• **options.loggingConnectorType?**: `string`
-
-The type of logging connector to use, defaults to no logging.
-
-• **options.config**: [`IAwsConnectorConfig`](../interfaces/IAwsConnectorConfig.md)
-
-The configuration for the SES connector.
-
 #### Returns
 
-[`AwsMessagingEmailConnector`](AwsMessagingEmailConnector.md)
+`AwsMessagingEmailConnector`
 
 ## Properties
+
+### NAMESPACE
+
+> `readonly` `static` **NAMESPACE**: `string` = `"aws"`
+
+The namespace for the connector.
+
+***
 
 ### CLASS\_NAME
 
@@ -48,25 +50,33 @@ Runtime name for the class.
 
 ### sendCustomEmail()
 
-> **sendCustomEmail**(`sender`, `receivers`, `subject`, `content`): `Promise`\<`boolean`\>
+> **sendCustomEmail**(`sender`, `recipients`, `subject`, `content`): `Promise`\<`boolean`\>
 
 Send a custom email using AWS SES.
 
 #### Parameters
 
-• **sender**: `string`
+##### sender
+
+`string`
 
 The sender email address.
 
-• **receivers**: `string`[]
+##### recipients
 
-An array of receivers email addresses.
+`string`[]
 
-• **subject**: `string`
+An array of recipients email addresses.
+
+##### subject
+
+`string`
 
 The subject of the email.
 
-• **content**: `string`
+##### content
+
+`string`
 
 The html content of the email.
 

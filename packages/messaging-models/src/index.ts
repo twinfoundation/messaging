@@ -3,6 +3,7 @@
 export * from "./factories/messagingEmailConnectorFactory";
 export * from "./factories/messagingPushNotificationsConnectorFactory";
 export * from "./factories/messagingSmsConnectorFactory";
+export * from "./models/IMessagingComponent";
 export * from "./models/IMessagingEmailConnector";
 export * from "./models/IMessagingPushNotificationsConnector";
 export * from "./models/IMessagingSmsConnector";

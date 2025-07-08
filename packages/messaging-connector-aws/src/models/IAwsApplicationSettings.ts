@@ -6,7 +6,7 @@
  */
 export interface IAwsApplicationSettings {
 	/**
-	 * The application identificator to send the push notifications.
+	 * The application identity to send the push notifications.
 	 */
 	applicationId: string;
 

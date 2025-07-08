@@ -2,6 +2,7 @@
 
 ## Interfaces
 
+- [IMessagingComponent](interfaces/IMessagingComponent.md)
 - [IMessagingEmailConnector](interfaces/IMessagingEmailConnector.md)
 - [IMessagingPushNotificationsConnector](interfaces/IMessagingPushNotificationsConnector.md)
 - [IMessagingSmsConnector](interfaces/IMessagingSmsConnector.md)
