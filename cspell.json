@@ -17,7 +17,7 @@
 		".eslintrc.cjs",
 		"**/wordlists/**"
 	],
-	"words": ["abbrev", "localstack", "nameof", "sesv", "Stiftung"],
+	"words": ["abbrev", "autorelease", "localstack", "nameof", "sesv", "Stiftung"],
 	"ignoreRegExpList": [
 		"/from\\s+(['\"]).*\\1/",
 		"/eslint-disable.*/",
