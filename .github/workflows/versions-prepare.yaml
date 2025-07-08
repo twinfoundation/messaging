@@ -139,6 +139,6 @@ jobs:
         if: always()
         run: |
           if [ -n "$GPG_KEY_ID" ]; then
-            gpg --delete-secret-keys "$GPG_KEY_ID" || true
-            gpg --delete-keys "$GPG_KEY_ID" || true
+            gpg --batch --yes --delete-secret-keys "$GPG_KEY_ID" || true
+            gpg --batch --yes --delete-keys "$GPG_KEY_ID" || true
           fi
