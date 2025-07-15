@@ -11,7 +11,7 @@ runs:
   using: 'composite'
   steps:
     - name: Start LocalStack
-      if: input.package == 'packages/messaging-connector-aws' || input.package == 'all'
+      if: inputs.package == 'packages/messaging-connector-aws' || inputs.package == 'all'
       shell: bash
       run: |
         docker run -d \
