@@ -1,0 +1,24 @@
+name: 'Setup Testing Environment'
+description: 'Set up the testing environment for running tests from the build workflow.'
+
+inputs:
+  package:
+    description: 'The package to set up the test environment for.'
+    required: true
+    default: 'all'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Start LocalStack
+      if: input.package == 'packages/messaging-connector-aws' || input.package == 'all'
+      shell: bash
+      run: |
+        docker run -d \
+          --name localstack \
+          -p 4566:4566 \
+          -e AWS_DEFAULT_REGION=eu-central-1 \
+          -e AWS_ACCESS_KEY_ID=test \
+          -e AWS_SECRET_ACCESS_KEY=test \
+          -e SERVICES=sns,ses \
+          localstack/localstack:latest
