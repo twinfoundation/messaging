@@ -17,7 +17,7 @@ To run AWS locally:
 
 ```sh
 
-docker run -p 4566:4566 --name twin-messaging-aws -d localstack/localstack -e AWS_DEFAULT_REGION='eu-central-1' -e AWS_ACCESS_KEY_ID='test' -e AWS_SECRET_ACCESS_KEY='test' -e SERVICE='SNS,SES'
+docker run -p 4866:4566 --name twin-messaging-aws -d localstack/localstack -e AWS_DEFAULT_REGION='eu-central-1' -e AWS_ACCESS_KEY_ID='test' -e AWS_SECRET_ACCESS_KEY='test' -e SERVICE='SNS,SES'
 ```
 
 Afterwards you can run the tests as follows:

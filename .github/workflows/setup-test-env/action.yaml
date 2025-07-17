@@ -16,7 +16,7 @@ runs:
       run: |
         docker run -d \
           --name localstack \
-          -p 4566:4566 \
+          -p 4866:4566 \
           -e AWS_DEFAULT_REGION=eu-central-1 \
           -e AWS_ACCESS_KEY_ID=test \
           -e AWS_SECRET_ACCESS_KEY=test \
